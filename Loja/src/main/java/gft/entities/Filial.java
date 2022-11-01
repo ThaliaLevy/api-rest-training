@@ -19,6 +19,14 @@ public class Filial {
 
 	@Embedded
 	private Endereco endereco;
+	
+	public Filial() {}
+	
+	public Filial(Long id, String nome, Endereco endereco) {
+		this.id = id;
+		this.nome = nome;
+		this.endereco = endereco;
+	}
 
 	public Long getId() {
 		return id;

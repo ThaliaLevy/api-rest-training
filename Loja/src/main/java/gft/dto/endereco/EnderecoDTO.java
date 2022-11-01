@@ -1,18 +1,15 @@
-package gft.entities;
+package gft.dto.endereco;
 
-import javax.persistence.Embeddable;
-
-@Embeddable
-public class Endereco {
+public class EnderecoDTO {
 
 	private String logradouro;
 	private String numero;
 	private String complemento;
 	private String cep;
-	
-	public Endereco() {}
-	
-	public Endereco(String logradouro, String numero, String complemento, String cep) {
+
+	public EnderecoDTO() {}
+
+	public EnderecoDTO(String logradouro, String numero, String complemento, String cep) {
 		this.logradouro = logradouro;
 		this.numero = numero;
 		this.complemento = complemento;
