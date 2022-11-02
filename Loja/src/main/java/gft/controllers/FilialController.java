@@ -43,13 +43,20 @@ public class FilialController {
 
 	@GetMapping("{id}") // localhost:8080/v1/filiais/1 -> /1 se eu quiser id = 1
 	public ResponseEntity<ConsultaFilialDTO> buscarFilial(@PathVariable Long id) {
-		try {
+		Filial filial = filialService.buscarFilial(id);
+
+		return ResponseEntity.ok(FilialMapper.fromEntity(filial));
+		
+	/*	Forma 01:
+	  	antes de criar as classes de exception
+	  	try {
 			Filial filial = filialService.buscarFilial(id);
 
 			return ResponseEntity.ok(FilialMapper.fromEntity(filial));
 		} catch (Exception e) {
 			return ResponseEntity.notFound().build();
 		}
+	*/
 	}
 
 	@PutMapping("{id}")

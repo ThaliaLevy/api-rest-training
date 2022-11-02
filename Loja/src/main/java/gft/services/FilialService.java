@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import gft.entities.Filial;
+import gft.exception.EntityNotFoundException;
 import gft.repositories.FilialRepository;
 
 @Service
@@ -28,7 +29,7 @@ public class FilialService {
 	public Filial buscarFilial(Long id) {
 		Optional<Filial> optional = filialRepository.findById(id);
 		
-		return optional.orElseThrow(() -> new RuntimeException("Filial não encontrada!"));
+		return optional.orElseThrow(() -> new EntityNotFoundException("Filial não encontrada!"));
 	}
 
 	public Filial atualizarFilial(Filial filial, Long id) {
