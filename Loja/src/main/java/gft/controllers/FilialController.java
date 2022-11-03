@@ -3,6 +3,9 @@ package gft.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,9 +33,12 @@ public class FilialController {
 	}
 
 	@GetMapping // map: converte o tipo de uma classe para outra
-	public ResponseEntity<List<ConsultaFilialDTO>> buscarFiliais() {
-		return ResponseEntity.ok(filialService.listarTodasAsFiliais().stream().map(FilialMapper::fromEntity)
-				.collect(Collectors.toList()));
+	public ResponseEntity<Page<ConsultaFilialDTO>> buscarFiliais(@PageableDefault Pageable pageable) {		
+		//@PageableDefault serve para paginação
+		//@PageableDefault(size = 3) -> retorna somente 3 objetos. e existem outras configurações que podemos fazer
+		
+		return ResponseEntity.ok(filialService.listarTodasAsFiliais(pageable).map(FilialMapper::fromEntity));
+		// Forma 01: return ResponseEntity.ok(filialService.listarTodasAsFiliais(pageable).stream().map(FilialMapper::fromEntity).collect(Collectors.toList()));
 	}
 
 	@PostMapping

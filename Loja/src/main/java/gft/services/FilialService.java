@@ -1,8 +1,9 @@
 package gft.services;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import gft.entities.Filial;
@@ -22,8 +23,8 @@ public class FilialService {
 		return filialRepository.save(filial);
 	}
 
-	public List<Filial> listarTodasAsFiliais() {
-		return filialRepository.findAll();
+	public Page<Filial> listarTodasAsFiliais(Pageable pageable) {
+		return filialRepository.findAll(pageable);
 	}
 
 	public Filial buscarFilial(Long id) {
