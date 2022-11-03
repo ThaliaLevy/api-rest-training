@@ -21,11 +21,11 @@ import gft.services.FilialService;
 
 @RestController
 @RequestMapping("v1/filiais")
-public class FilialController {
+public class ProdutoController {
 
 	private final FilialService filialService;
 
-	public FilialController(FilialService filialService) {
+	public ProdutoController(FilialService filialService) {
 		this.filialService = filialService;
 	}
 
