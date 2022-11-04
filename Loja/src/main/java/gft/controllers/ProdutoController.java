@@ -13,70 +13,55 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gft.dto.filial.ConsultaFilialDTO;
-import gft.dto.filial.FilialMapper;
-import gft.dto.filial.RegistroFilialDTO;
-import gft.entities.Filial;
-import gft.services.FilialService;
+import gft.dto.produto.ConsultaProdutoDTO;
+import gft.dto.produto.ProdutoMapper;
+import gft.dto.produto.RegistroProdutoDTO;
+import gft.entities.Produto;
+import gft.services.ProdutoService;
 
 @RestController
-@RequestMapping("v1/filiais")
+@RequestMapping("v1/produtos")
 public class ProdutoController {
 
-	private final FilialService filialService;
+	private final ProdutoService produtoService;
 
-	public ProdutoController(FilialService filialService) {
-		this.filialService = filialService;
+	public ProdutoController(ProdutoService produtoService) {
+		this.produtoService = produtoService;
 	}
 
 	@GetMapping // map: converte o tipo de uma classe para outra
-	public ResponseEntity<Page<ConsultaFilialDTO>> buscarFiliais(@PageableDefault Pageable pageable) {		
-		//@PageableDefault serve para paginação
-		//@PageableDefault(size = 3) -> retorna somente 3 objetos. e existem outras configurações que podemos fazer
-		
-		return ResponseEntity.ok(filialService.listarTodasAsFiliais(pageable).map(FilialMapper::fromEntity));
-		// Forma 01: return ResponseEntity.ok(filialService.listarTodasAsFiliais(pageable).stream().map(FilialMapper::fromEntity).collect(Collectors.toList()));
+	public ResponseEntity<Page<ConsultaProdutoDTO>> buscarProdutos(@PageableDefault Pageable pageable) {				
+		return ResponseEntity.ok(produtoService.listarTodosOsProdutos(pageable).map(ProdutoMapper::fromEntity));
 	}
 
 	@PostMapping
-	public ResponseEntity<ConsultaFilialDTO> salvarFilial(@RequestBody RegistroFilialDTO dto) {
-		Filial filial = filialService.salvarFilial(FilialMapper.fromDTO(dto));
-		return ResponseEntity.ok(FilialMapper.fromEntity(filial));
+	public ResponseEntity<ConsultaProdutoDTO> salvarProduto(@RequestBody RegistroProdutoDTO dto) {
+		Produto produto = produtoService.salvarProduto(ProdutoMapper.fromDTO(dto));
+		return ResponseEntity.ok(ProdutoMapper.fromEntity(produto));
 	}
 
 	@GetMapping("{id}") // localhost:8080/v1/filiais/1 -> /1 se eu quiser id = 1
-	public ResponseEntity<ConsultaFilialDTO> buscarFilial(@PathVariable Long id) {
-		Filial filial = filialService.buscarFilial(id);
+	public ResponseEntity<ConsultaProdutoDTO> buscarProduto(@PathVariable Long id) {
+		Produto produto = produtoService.buscarProduto(id);
 
-		return ResponseEntity.ok(FilialMapper.fromEntity(filial));
-		
-	/*	Forma 01:
-	  	antes de criar as classes de exception
-	  	try {
-			Filial filial = filialService.buscarFilial(id);
-
-			return ResponseEntity.ok(FilialMapper.fromEntity(filial));
-		} catch (Exception e) {
-			return ResponseEntity.notFound().build();
-		}
-	*/
+		return ResponseEntity.ok(ProdutoMapper.fromEntity(produto));
 	}
 
 	@PutMapping("{id}")
-	public ResponseEntity<ConsultaFilialDTO> alterarFilial(@RequestBody RegistroFilialDTO dto, @PathVariable Long id) {
+	public ResponseEntity<ConsultaProdutoDTO> alterarProduto(@RequestBody RegistroProdutoDTO dto, @PathVariable Long id) {
 		try {
-			Filial filial = filialService.atualizarFilial(FilialMapper.fromDTO(dto), id);
+			Produto produto = produtoService.atualizarProduto(ProdutoMapper.fromDTO(dto), id);
 
-			return ResponseEntity.ok(FilialMapper.fromEntity(filial));
+			return ResponseEntity.ok(ProdutoMapper.fromEntity(produto));
 		} catch (Exception e) {
 			return ResponseEntity.notFound().build();
 		}
 	}
 
 	@DeleteMapping("{id}")
-	public ResponseEntity<ConsultaFilialDTO> excluirFilial(@PathVariable Long id) {
+	public ResponseEntity<ConsultaProdutoDTO> excluirProduto(@PathVariable Long id) {
 		try {
-			filialService.excluirFilial(id);
+			produtoService.excluirProduto(id);
 			
 			return ResponseEntity.ok().build();
 		} catch (Exception e) {

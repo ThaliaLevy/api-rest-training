@@ -13,12 +13,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gft.dto.filial.ClienteMapper;
-import gft.dto.filial.RegistroClienteDTO;
+import gft.dto.cliente.ClienteMapper;
+import gft.dto.cliente.ConsultaClienteDTO;
+import gft.dto.cliente.RegistroClienteDTO;
+import gft.entities.Cliente;
+import gft.services.ClienteService;
 
 @RestController
 @RequestMapping("v1/clientes")
-public class Cliente {
+public class ClienteController {
 
 	private final ClienteService clienteService;
 
@@ -27,7 +30,7 @@ public class Cliente {
 	}
 
 	@GetMapping // map: converte o tipo de uma classe para outra
-	public ResponseEntity<Page<ConsultaClienteDTO>> buscarClientes(@PageableDefault Pageable pageable) {				
+	public ResponseEntity<Page<ConsultaClienteDTO>> buscarClientes(@PageableDefault Pageable pageable) {
 		return ResponseEntity.ok(clienteService.listarTodosOsClientes(pageable).map(ClienteMapper::fromEntity));
 	}
 
@@ -55,11 +58,12 @@ public class Cliente {
 		}
 	}
 
+
 	@DeleteMapping("{id}")
 	public ResponseEntity<ConsultaClienteDTO> excluirCliente(@PathVariable Long id) {
 		try {
 			clienteService.excluirCliente(id);
-			
+
 			return ResponseEntity.ok().build();
 		} catch (Exception e) {
 			return ResponseEntity.notFound().build();

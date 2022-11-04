@@ -41,8 +41,8 @@ public class FornecedorService {
 	}
 
 	public void excluirFornecedor(Long id) {
-		Fornecedor FornecedorServiceOriginal = this.buscarFornecedor(id);
+		Fornecedor fornecedorServiceOriginal = this.buscarFornecedor(id);
 
-		fornecedorRepository.delete(FornecedorServiceOriginal);
+		fornecedorRepository.delete(fornecedorServiceOriginal);
 	}
 }
