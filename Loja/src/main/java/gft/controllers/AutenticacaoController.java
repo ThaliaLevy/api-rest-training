@@ -1,20 +1,32 @@
 package gft.controllers;
 
-public class AutenticacaoController {
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-	private String email;
-	private String senha;
+import gft.controllers.form.AutenticacaoForm;
+import gft.dto.TokenDTO;
+import gft.services.AutenticacaoService;
+
+@RestController
+@RequestMapping("/auth")
+public class AutenticacaoController {
 	
-	public String getEmail() {
-		return email;
+	private final AutenticacaoService autenticacaoService;
+	
+	public AutenticacaoController(AutenticacaoService autenticacaoService) {
+		this.autenticacaoService = autenticacaoService;
 	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getSenha() {
-		return senha;
-	}
-	public void setSenha(String senha) {
-		this.senha = senha;
+
+	@PostMapping
+	public ResponseEntity<TokenDTO> autenticar(@RequestBody AutenticacaoForm authForm){
+		try {
+			return ResponseEntity.ok(autenticacaoService.autenticar(authForm));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();		}
+		
 	}
 }
