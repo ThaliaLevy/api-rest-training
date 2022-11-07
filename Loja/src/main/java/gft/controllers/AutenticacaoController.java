@@ -14,19 +14,20 @@ import gft.services.AutenticacaoService;
 @RestController
 @RequestMapping("/auth")
 public class AutenticacaoController {
-	
+
 	private final AutenticacaoService autenticacaoService;
-	
+
 	public AutenticacaoController(AutenticacaoService autenticacaoService) {
 		this.autenticacaoService = autenticacaoService;
 	}
 
 	@PostMapping
-	public ResponseEntity<TokenDTO> autenticar(@RequestBody AutenticacaoForm authForm){
+	public ResponseEntity<TokenDTO> autenticar(@RequestBody AutenticacaoForm authForm) {
 		try {
 			return ResponseEntity.ok(autenticacaoService.autenticar(authForm));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();		}
-		
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
 	}
 }
