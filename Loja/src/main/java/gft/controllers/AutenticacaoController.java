@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gft.controllers.form.AutenticacaoForm;
+import gft.dto.AutenticacaoDTO;
 import gft.dto.TokenDTO;
 import gft.services.AutenticacaoService;
 
@@ -22,7 +22,7 @@ public class AutenticacaoController {
 	}
 
 	@PostMapping
-	public ResponseEntity<TokenDTO> autenticar(@RequestBody AutenticacaoForm authForm) {
+	public ResponseEntity<TokenDTO> autenticar(@RequestBody AutenticacaoDTO authForm) {
 		try {
 			return ResponseEntity.ok(autenticacaoService.autenticar(authForm));
 		} catch (Exception e) {

@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,7 @@ import gft.dto.produto.ConsultaProdutoDTO;
 import gft.dto.produto.ProdutoMapper;
 import gft.dto.produto.RegistroProdutoDTO;
 import gft.entities.Produto;
+import gft.entities.Usuario;
 import gft.services.ProdutoService;
 
 @RestController
@@ -30,6 +33,7 @@ public class ProdutoController {
 	}
 
 	@GetMapping // map: converte o tipo de uma classe para outra
+	@PreAuthorize("hasAuthority('Admin')")
 	public ResponseEntity<Page<ConsultaProdutoDTO>> buscarProdutos(@PageableDefault Pageable pageable) {				
 		return ResponseEntity.ok(produtoService.listarTodosOsProdutos(pageable).map(ProdutoMapper::fromEntity));
 	}
@@ -67,6 +71,29 @@ public class ProdutoController {
 		} catch (Exception e) {
 			return ResponseEntity.notFound().build();
 		}
-
+	}
+	
+	/* FORMA 01:
+	@GetMapping("usuario")
+	@PreAuthorize("hasAuthority('Usuario')")
+	public ResponseEntity<String> metodoGetUsuario() {				
+		return ResponseEntity.ok("Usuário chegou aqui!");
+	}
+	
+	@GetMapping("admin")
+	@PreAuthorize("hasAuthority('Admin')")
+	public ResponseEntity<String> metodoGetAdmin() {				
+		return ResponseEntity.ok("Admin chegou aqui!");
+	} 
+	  FORMA 02: */
+	
+	@GetMapping("usuario")
+	public ResponseEntity<String> metodoGetAdmin() {	
+		Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if(usuario.getPerfil().getNome().equals("Admin")) {
+			return ResponseEntity.ok("Admin chegou aqui!");
+		}
+		return ResponseEntity.ok("Usuário chegou aqui!");
 	}
 }

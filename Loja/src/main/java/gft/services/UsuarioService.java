@@ -42,4 +42,8 @@ private final UsuarioRepository usuarioRepository;
 		}
 		return optional.get();
 	}
+
+	public Usuario salvarUsuario(Usuario usuario) {
+		return usuarioRepository.save(usuario);
+	}
 }

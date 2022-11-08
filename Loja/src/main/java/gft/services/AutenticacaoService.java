@@ -13,7 +13,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 
-import gft.controllers.form.AutenticacaoForm;
+import gft.dto.AutenticacaoDTO;
 import gft.dto.TokenDTO;
 import gft.entities.Usuario;
 
@@ -34,7 +34,7 @@ public class AutenticacaoService {
 		this.authManager = authManager;
 	}
 
-	public TokenDTO autenticar(AutenticacaoForm authForm) throws AuthenticationException {
+	public TokenDTO autenticar(AutenticacaoDTO authForm) throws AuthenticationException {
 		Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(authForm.getEmail(), authForm.getSenha()));
 
 		String token = gerarToken(authentication);

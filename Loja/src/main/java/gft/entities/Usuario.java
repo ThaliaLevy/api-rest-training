@@ -7,11 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tb_usuario")
@@ -22,10 +24,25 @@ public class Usuario implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String email;
+	
+	@JsonIgnore
 	private String senha;
 
-	@OneToOne
+	@ManyToOne
 	private Perfil perfil;
+	
+	@ManyToOne
+	private Filial filial;
+
+	public Usuario() {}
+
+	public Usuario(Long id, String email, String senha, Perfil perfil, Filial filial) {
+		this.id = id;
+		this.email = email;
+		this.senha = senha;
+		this.perfil = perfil;
+		this.filial = filial;
+	}
 
 	public Long getId() {
 		return id;
@@ -57,6 +74,14 @@ public class Usuario implements UserDetails {
 
 	public void setPerfil(Perfil perfil) {
 		this.perfil = perfil;
+	}
+
+	public Filial getFilial() {
+		return filial;
+	}
+
+	public void setFilial(Filial filial) {
+		this.filial = filial;
 	}
 
 	@Override
@@ -92,5 +117,10 @@ public class Usuario implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Usuario [id=" + id + ", email=" + email + ", perfil=" + perfil + "]";
 	}
 }
