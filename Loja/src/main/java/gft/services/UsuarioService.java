@@ -33,4 +33,13 @@ private final UsuarioRepository usuarioRepository;
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return buscarUsuarioPorEmail(username);
 	}
+
+	public Usuario buscarUsuarioPorId(Long idUsuario) {
+		Optional<Usuario> optional = usuarioRepository.findById(idUsuario);
+		
+		if(optional.isEmpty()) {
+			throw new RuntimeException("Usuário não encontrado!");
+		}
+		return optional.get();
+	}
 }
