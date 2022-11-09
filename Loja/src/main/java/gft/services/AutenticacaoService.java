@@ -35,7 +35,8 @@ public class AutenticacaoService {
 	}
 
 	public TokenDTO autenticar(AutenticacaoDTO authForm) throws AuthenticationException {
-		Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(authForm.getEmail(), authForm.getSenha()));
+		Authentication authentication = authManager
+				.authenticate(new UsernamePasswordAuthenticationToken(authForm.getEmail(), authForm.getSenha()));
 
 		String token = gerarToken(authentication);
 
@@ -52,26 +53,23 @@ public class AutenticacaoService {
 
 		Date dataDeHoje = new Date();
 		Date dataDeExpiracao = new Date(dataDeHoje.getTime() + Long.parseLong(expiration));
-		return JWT.create()
-				  .withIssuer(issuer)
-				  .withExpiresAt(dataDeExpiracao)
-				  .withSubject(principal.getId().toString())
-				  .sign(this.criarAlgoritmo());
+		return JWT.create().withIssuer(issuer).withExpiresAt(dataDeExpiracao).withSubject(principal.getId().toString())
+				.sign(this.criarAlgoritmo());
 	}
 
 	public boolean verificaToken(String token) {
 		try {
-			if(token == null) {
+			if (token == null) {
 				return false;
 			}
-			
+
 			JWT.require(this.criarAlgoritmo()).withIssuer(issuer).build().verify(token);
 			return true;
 		} catch (JWTVerificationException exception) {
 			return false;
 		}
 	}
-	
+
 	public Long retornarIdUsuario(String token) {
 		String subject = JWT.require(this.criarAlgoritmo()).withIssuer(issuer).build().verify(token).getSubject();
 		return Long.parseLong(subject);
