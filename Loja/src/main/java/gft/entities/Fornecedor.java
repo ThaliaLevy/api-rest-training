@@ -24,6 +24,10 @@ public class Fornecedor {
 	private Endereco endereco;
 
 	public Fornecedor() {}
+	
+	public Fornecedor(Long id) {
+		this.id = id;
+	}
 
 	public Fornecedor(Long id, String cnpj, String nome, String telefone, String email, Endereco endereco) {
 		this.id = id;
