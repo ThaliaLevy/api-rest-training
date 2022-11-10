@@ -1,10 +1,12 @@
-package com.levythalia;
+package com.levythalia.controllers;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.levythalia.Greeting;
 
 //@Controller    //necessita de uma view para exibir seus dados
 //para obter o comportamento do RestController usando @Controller, basta tb utilizar a anotação @ResponseBody
