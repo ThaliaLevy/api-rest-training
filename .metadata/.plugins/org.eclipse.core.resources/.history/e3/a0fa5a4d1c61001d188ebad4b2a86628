@@ -1,0 +1,5 @@
+package com.levythalia.exceptions;
+
+public class UnsupportedMathOperationException {
+
+}
