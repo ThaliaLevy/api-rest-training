@@ -65,6 +65,7 @@ INDEX VERSION 1.131+C:\Users\taly\spring-workspace\DesafioAPI\estudos-api-rest\.
 2795804158.index
 3081920118.index
 205140381.index
+204434604.index
 3435312730.index
 1675064374.index
 4033086524.index
@@ -81,7 +82,6 @@ INDEX VERSION 1.131+C:\Users\taly\spring-workspace\DesafioAPI\estudos-api-rest\.
 2214760935.index
 2397962437.index
 1093942010.index
-1433492533.index
 2857948156.index
 643165316.index
 1865898197.index

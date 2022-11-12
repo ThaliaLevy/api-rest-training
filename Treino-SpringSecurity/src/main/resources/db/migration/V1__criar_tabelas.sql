@@ -4,12 +4,12 @@ descricao VARCHAR(255) NOT NULL);
 
 CREATE TABLE tb_users (
 id BIGINT AUTO_INCREMENT PRIMARY KEY,
-email VARCHAR(255) NOT NULL,
+email VARCHAR(255) NOT NULL UNIQUE KEY,
 nome VARCHAR(255) NOT NULL,
 senha VARCHAR(255) NOT NULL,
-contaNaoExpirada VARCHAR(255) NOT NULL,
-contaNaoBloqueada VARCHAR(255) NOT NULL,
-credenciaisNaoExpiradas VARCHAR(255) NOT NULL,
+conta_nao_expirada VARCHAR(255) NOT NULL,
+conta_nao_bloqueada VARCHAR(255) NOT NULL,
+credenciais_nao_expiradas VARCHAR(255) NOT NULL,
 enabled VARCHAR(255) NOT NULL,
 permission_id BIGINT NOT NULL,
 FOREIGN KEY (permission_id) REFERENCES tb_permission(id));

@@ -1,0 +1,13 @@
+- tabelas obrigatorias (por convenção): users - permission (perfil) - user_permission.
+- também é convenção criar as colunas contaNaoExpirada, contaNaoBloqueada, credenciaisNaoExpiradas, enabled pois serão utilizadas pelo spring security obrigatoriamente.
+- "implements UserDetails" 
+- para o caso de manytomany:
+	@ManyToMany(fetch = FetchType.EAGER)
+	private List<Classe> apelido; 
+	
+	usa-se o fetch quando se quer indicar que quer que duas tabelas carreguem ao mesmo tempo.
+	
+- @JoinTable(name = "nomeTabela) -> serve para indicar qual a tabela que está no meio de duas tabelas com 
+relacionamento manyotmany.
+
+** ao inves de usar o getAuthorities, to usando getPermission
