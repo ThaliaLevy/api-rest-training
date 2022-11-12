@@ -6,8 +6,9 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value=""/>
+		<item key="selection" value="descricao"/>
 		<list key="findhistory">
+			<item value="description"/>
 			<item value="documentationPluginsBootstrapper"/>
 			<item value="isNumeric"/>
 			<item value="convertToDouble"/>
@@ -20,6 +21,7 @@
 			<item value="convertToDouble("/>
 		</list>
 		<list key="replacehistory">
+			<item value="descricao"/>
 			<item value="NumberConverter.isNumeric"/>
 			<item value="NumberConverter.convertToDouble"/>
 			<item value="(Double numberOne, Double numberTwo)"/>

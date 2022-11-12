@@ -29,7 +29,7 @@ public class UsuarioController {
 		return ResponseEntity.ok(UsuarioMapper.fromEntity(usuario));
 	}
 	
-	//senha teste: $2a$10$Ueu8/ocgoGeoljwf6QA2IuXn5wWIggBYYgqbkanieZ5.vlf8VmnZa
+	//senha teste (oi): $2a$10$Ueu8/ocgoGeoljwf6QA2IuXn5wWIggBYYgqbkanieZ5.vlf8VmnZa 
 	
 	public static void main(String args[]) {
 		BCryptPasswordEncoder b = new BCryptPasswordEncoder();
