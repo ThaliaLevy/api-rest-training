@@ -2,6 +2,7 @@ package gft.dto.usuario;
 
 public class RegistroUsuarioDTO {
 
+	private String nome;
 	private String email;
 	private String senha;
 	private Long perfilId;
@@ -9,11 +10,20 @@ public class RegistroUsuarioDTO {
 
 	public RegistroUsuarioDTO() {}
 
-	public RegistroUsuarioDTO(String email, String senha, Long perfilId, Long filialId) {
+	public RegistroUsuarioDTO(String nome, String email, String senha, Long perfilId, Long filialId) {
+		this.nome = nome;
 		this.email = email;
 		this.senha = senha;
 		this.perfilId = perfilId;
 		this.filialId = filialId;
+	}
+	
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	public String getEmail() {

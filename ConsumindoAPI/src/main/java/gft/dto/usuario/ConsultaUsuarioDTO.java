@@ -1,19 +1,15 @@
 package gft.dto.usuario;
 
-import gft.dto.filial.ConsultaFilialDTO;
-
 public class ConsultaUsuarioDTO {
 
 	private String email;
 	private String nomePerfil;
-	private ConsultaFilialDTO filial;
 
 	public ConsultaUsuarioDTO() {}
 
-	public ConsultaUsuarioDTO(String email, String nomePerfil, ConsultaFilialDTO filial) {
+	public ConsultaUsuarioDTO(String email, String nomePerfil) {
 		this.email = email;
 		this.nomePerfil = nomePerfil;
-		this.filial = filial;
 	}
 
 	public String getEmail() {
@@ -32,11 +28,5 @@ public class ConsultaUsuarioDTO {
 		this.nomePerfil = nomePerfil;
 	}
 
-	public ConsultaFilialDTO getFilial() {
-		return filial;
-	}
-
-	public void setFilial(ConsultaFilialDTO filial) {
-		this.filial = filial;
-	}
+	
 }

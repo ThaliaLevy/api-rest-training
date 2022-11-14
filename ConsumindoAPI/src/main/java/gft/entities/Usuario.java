@@ -23,6 +23,7 @@ public class Usuario implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	private String nome;
 	private String email;
 	
 	@JsonIgnore
@@ -30,18 +31,15 @@ public class Usuario implements UserDetails {
 
 	@ManyToOne
 	private Perfil perfil;
-	
-	@ManyToOne
-	private Filial filial;
 
 	public Usuario() {}
 
-	public Usuario(Long id, String email, String senha, Perfil perfil, Filial filial) {
+	public Usuario(Long id, String nome, String email, String senha, Perfil perfil) {
 		this.id = id;
+		this.nome = nome;
 		this.email = email;
 		this.senha = senha;
 		this.perfil = perfil;
-		this.filial = filial;
 	}
 
 	public Long getId() {
@@ -50,6 +48,14 @@ public class Usuario implements UserDetails {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	public String getEmail() {
@@ -74,14 +80,6 @@ public class Usuario implements UserDetails {
 
 	public void setPerfil(Perfil perfil) {
 		this.perfil = perfil;
-	}
-
-	public Filial getFilial() {
-		return filial;
-	}
-
-	public void setFilial(Filial filial) {
-		this.filial = filial;
 	}
 
 	@Override
@@ -121,6 +119,6 @@ public class Usuario implements UserDetails {
 
 	@Override
 	public String toString() {
-		return "Usuario [id=" + id + ", email=" + email + ", perfil=" + perfil + "]";
+		return "Usuario [id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", perfil=" + perfil + "]";
 	}
 }
