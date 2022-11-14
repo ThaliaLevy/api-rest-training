@@ -1,5 +1,6 @@
 package com.levythalia.springsecurity.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,12 +12,15 @@ import com.levythalia.springsecurity.repositories.UserRepository;
 @Service
 public class UserService implements UserDetailsService {
 
-	private final UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
+
+	public UserService() {}
 	
 	public UserService(UserRepository userRepository) {
-		this.userRepository= userRepository;
+		this.userRepository = userRepository;
 	}
-	
+
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepository.findByEmail(email);

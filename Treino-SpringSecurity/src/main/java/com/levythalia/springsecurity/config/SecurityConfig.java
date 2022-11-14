@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,6 +19,8 @@ import com.levythalia.springsecurity.security.jwt.JwtConfigurer;
 import com.levythalia.springsecurity.security.jwt.JwtTokenProvider;
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableJpaRepositories
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final JwtTokenProvider tokenProvider;
@@ -24,13 +28,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public SecurityConfig(JwtTokenProvider tokenProvider) {
 		this.tokenProvider = tokenProvider;
 	}
-
+	
 	//define como vai criptografar as senhas
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		Map<String, PasswordEncoder> encoders = new HashMap();
+		Map<String, PasswordEncoder> encoders = new HashMap<>();
 		encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
 		DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder("pbkdf2", encoders);
+		passwordEncoder.setDefaultPasswordEncoderForMatches(new Pbkdf2PasswordEncoder());
 		
 		return passwordEncoder;
 	}

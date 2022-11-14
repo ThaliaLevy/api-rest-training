@@ -11,6 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long>{
 
 	/* A query lida com o objeto e não com o banco, por isso os dados precisam ser
 	 * buscados de acordo com como os atributos foram criados na entity. */
-	@Query("SELECT u FROM User WHERE u.email =: emailParametro")
+	@Query("SELECT u FROM User u WHERE u.email =: emailParametro")
 	User findByEmail(@Param("email") String emailParametro);
 }

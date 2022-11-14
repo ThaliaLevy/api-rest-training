@@ -2,6 +2,7 @@ package com.levythalia.springsecurity.security.jwt;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +48,7 @@ public class JwtTokenProvider {
 		algorithm = Algorithm.HMAC256(secretKey.getBytes());
 	}
 	
-	public TokenVO createAccessToken(String email, String permission) {
+	public TokenVO createAccessToken(String email, List<String> permission) {
 		Date dataDeHoje = new Date();
 		Date validadeToken = new Date(dataDeHoje.getTime() + validadeEmMilissegundos);
 		var accessToken = getAccessToken(email, permission, dataDeHoje, validadeToken);
@@ -55,7 +56,7 @@ public class JwtTokenProvider {
 		return new TokenVO(email, true, dataDeHoje, validadeToken, accessToken, refreshToken);
 	}
 
-	private String getAccessToken(String email, String permission, Date dataDeHoje, Date validadeToken) {
+	private String getAccessToken(String email, List<String> permission, Date dataDeHoje, Date validadeToken) {
 		String urlServidorOndeGeraOToken = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 		return JWT.create()
 				  .withClaim("permission", permission)
@@ -67,7 +68,7 @@ public class JwtTokenProvider {
 				  .strip();
 	}
 
-	private String getRefreshToken(String email, String permission, Date dataDeHoje) {
+	private String getRefreshToken(String email, List<String> permission, Date dataDeHoje) {
 		Date validadeRefreshToken = new Date(dataDeHoje.getTime() + (validadeEmMilissegundos * 2)); //aumentar validade token em 2x (2 minutos)
 		return JWT.create()
 				  .withClaim("permission", permission)

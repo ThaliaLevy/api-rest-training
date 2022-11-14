@@ -5,11 +5,15 @@ import java.util.Map;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 
 @SpringBootApplication
+//@ComponentScan("com.levythalia.springsecurity.repositories")
+//@EntityScan("com.levythalia.springsecurity.repositories")  
 public class TreinoSpringSecurityApplication {
 
 	public static void main(String[] args) {

@@ -13,7 +13,7 @@ public class TokenVO {
 	private String refreshToken;
 	
 	public TokenVO() {}
-	
+
 	public TokenVO(String email, Boolean authenticated, Date created, Date expiration, String accessToken, String refreshToken) {
 		this.email = email;
 		this.authenticated = authenticated;
