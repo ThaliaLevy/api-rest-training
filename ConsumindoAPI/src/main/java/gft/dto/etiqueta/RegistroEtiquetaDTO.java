@@ -3,6 +3,7 @@ package gft.dto.etiqueta;
 public class RegistroEtiquetaDTO {
 
 	private String nome;
+	//private Usuario usuario; 
 	
 	public RegistroEtiquetaDTO() {}
 

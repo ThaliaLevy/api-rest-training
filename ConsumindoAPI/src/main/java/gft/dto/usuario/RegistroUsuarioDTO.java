@@ -6,16 +6,14 @@ public class RegistroUsuarioDTO {
 	private String email;
 	private String senha;
 	private Long perfilId;
-	private Long filialId;
 
 	public RegistroUsuarioDTO() {}
 
-	public RegistroUsuarioDTO(String nome, String email, String senha, Long perfilId, Long filialId) {
+	public RegistroUsuarioDTO(String nome, String email, String senha, Long perfilId) {
 		this.nome = nome;
 		this.email = email;
 		this.senha = senha;
 		this.perfilId = perfilId;
-		this.filialId = filialId;
 	}
 	
 	public String getNome() {
@@ -48,13 +46,5 @@ public class RegistroUsuarioDTO {
 
 	public void setPerfilId(Long perfilId) {
 		this.perfilId = perfilId;
-	}
-
-	public Long getFilialId() {
-		return filialId;
-	}
-
-	public void setFilialId(Long filialId) {
-		this.filialId = filialId;
 	}
 }

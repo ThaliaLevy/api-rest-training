@@ -1,14 +1,7 @@
 package gft.controllers;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,24 +22,26 @@ public class EtiquetaController {
 		this.etiquetaService = etiquetaService;
 	}
 
-	@GetMapping // map: converte o tipo de uma classe para outra
-	public ResponseEntity<Page<ConsultaEtiquetaDTO>> buscarEtiquetas(@PageableDefault Pageable pageable) {
-		return ResponseEntity.ok(etiquetaService.listarTodaAsEtiquetas(pageable).map(EtiquetaMapper::fromEntity));
-	}
-
-	@PostMapping
+	@PostMapping("/vincular")
 	public ResponseEntity<ConsultaEtiquetaDTO> salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) {
 		Etiqueta etiqueta = etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(dto));
 		return ResponseEntity.ok(EtiquetaMapper.fromEntity(etiqueta));
 	}
 
-	@GetMapping("{id}") // localhost:8080/v1/filiais/1 -> /1 se eu quiser id = 1
+	
+	
+/*	@GetMapping("{id}") // localhost:8080/v1/filiais/1 -> /1 se eu quiser id = 1
 	public ResponseEntity<ConsultaEtiquetaDTO> buscarEtiqueta(@PathVariable Long id) {
 		Etiqueta etiqueta = etiquetaService.buscarEtiqueta(id);
 
 		return ResponseEntity.ok(EtiquetaMapper.fromEntity(etiqueta));
 	}
 
+	@GetMapping // map: converte o tipo de uma classe para outra
+	public ResponseEntity<Page<ConsultaEtiquetaDTO>> buscarEtiquetas(@PageableDefault Pageable pageable) {
+		return ResponseEntity.ok(etiquetaService.listarTodaAsEtiquetas(pageable).map(EtiquetaMapper::fromEntity));
+	}
+	
 	@PutMapping("{id}")
 	public ResponseEntity<ConsultaEtiquetaDTO> alterarEtiqueta(@RequestBody RegistroEtiquetaDTO dto, @PathVariable Long id) {
 		try {
@@ -69,5 +64,5 @@ public class EtiquetaController {
 			return ResponseEntity.notFound().build();
 		}
 
-	}
+	}*/
 }

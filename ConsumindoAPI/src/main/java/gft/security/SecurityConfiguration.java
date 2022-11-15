@@ -48,14 +48,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		super.configure(web);
 	}
 
-	/*TODO: swagger não pode ser visualizado devido a autenticação, que precisa ser feita antes.
-	 * Não está mostrando login, somente 'acesso negado'. */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			//.antMatchers(HttpMethod.GET, "swagger-ui.html#").permitAll()
-		    .antMatchers(HttpMethod.POST, "/auth").permitAll()
-		    .anyRequest().authenticated()
+		    .antMatchers(HttpMethod.POST, "/auth", "/api-docs/**", "/swagger-ui.html**").permitAll()
+		    .antMatchers("/v1/**").authenticated()	
 		    .and().csrf().disable()
 		    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		    .and().addFilterBefore(new FiltroAutenticacao(autenticacaoService, usuarioService), UsernamePasswordAuthenticationFilter.class);

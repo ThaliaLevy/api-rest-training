@@ -1,9 +1,12 @@
 package gft.entities;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -16,7 +19,8 @@ public class Etiqueta {
 
 	private String nome;
 	
-	/*TODO: provavelmente terei que fazer manytomany aqui e criar registro DTO da etiqueta utilizando esse atributo */
+	@ManyToMany
+	private List<Usuario> usuarios;
 
 	public Etiqueta() {}
 
@@ -39,5 +43,13 @@ public class Etiqueta {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public List<Usuario> getUsuarios() {
+		return usuarios;
+	}
+
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
 	}
 }

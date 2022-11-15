@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -31,6 +32,9 @@ public class Usuario implements UserDetails {
 
 	@ManyToOne
 	private Perfil perfil;
+	
+	@ManyToMany(mappedBy = "usuarios")	//etiquetas tem que achar "usuario" 
+	private List<Etiqueta> etiquetas;
 
 	public Usuario() {}
 

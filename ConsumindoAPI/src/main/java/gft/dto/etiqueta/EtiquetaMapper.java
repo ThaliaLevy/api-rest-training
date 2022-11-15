@@ -9,6 +9,6 @@ public class EtiquetaMapper {
 	}
 
 	public static ConsultaEtiquetaDTO fromEntity(Etiqueta etiqueta) {
-		return new ConsultaEtiquetaDTO(etiqueta.getId(), etiqueta.getNome());
+		return new ConsultaEtiquetaDTO(etiqueta.getId(), etiqueta.getNome(), etiqueta.getUsuarios());
 	}
 }
