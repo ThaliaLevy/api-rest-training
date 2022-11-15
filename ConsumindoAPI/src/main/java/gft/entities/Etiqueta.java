@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -20,13 +22,14 @@ public class Etiqueta {
 	private String nome;
 	
 	@ManyToMany
+	@JoinTable(name = "tb_usuario_etiquetas", joinColumns={@JoinColumn(name="etiqueta_id")},
+											  inverseJoinColumns= {@JoinColumn(name = "usuario_id")})
 	private List<Usuario> usuarios;
 
-	public Etiqueta() {}
-
-	public Etiqueta(Long id, String nome) {
+	public Etiqueta(Long id, String nome, List<Usuario> usuarios) {
 		this.id = id;
 		this.nome = nome;
+		this.usuarios = usuarios;
 	}
 
 	public Long getId() {

@@ -29,8 +29,9 @@ public class EtiquetaController {
 	}
 
 	
+/*
 	
-/*	@GetMapping("{id}") // localhost:8080/v1/filiais/1 -> /1 se eu quiser id = 1
+	@GetMapping("{id}") // localhost:8080/v1/filiais/1 -> /1 se eu quiser id = 1
 	public ResponseEntity<ConsultaEtiquetaDTO> buscarEtiqueta(@PathVariable Long id) {
 		Etiqueta etiqueta = etiquetaService.buscarEtiqueta(id);
 
