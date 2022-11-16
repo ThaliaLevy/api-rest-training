@@ -1,0 +1,5 @@
+package gft.dto.usuario;
+
+public class RegistroEtiquetaDTO {
+
+}

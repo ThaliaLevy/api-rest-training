@@ -1,0 +1,5 @@
+CREATE TABLE tb_usuario_etiquetas (
+usuario_id BIGINT NOT NULL,
+etiqueta VARCHAR(255) NOT NULL,
+FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id),
+FOREIGN KEY (etiqueta) REFERENCES tb_etiquetas(nome));

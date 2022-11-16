@@ -1,5 +1,0 @@
-package com.levythalia.exceptions;
-
-public class UnsuppotedMathOpeartionException {
-
-}

@@ -1,0 +1,5 @@
+package com.levythalia.springsecurity.exceptions.handlers;
+
+public class CustomizedResponseEntityExceptionHandler {
+
+}

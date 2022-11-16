@@ -1,0 +1,2 @@
+- tabelas obrigatorias (por convenção): users - permission (perfil) - user_permission
+- também é convenção criar as colunas que são sugeridas pelo 

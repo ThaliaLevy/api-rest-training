@@ -1,0 +1,17 @@
+package gft.dto.cliente;
+
+import gft.dto.endereco.EnderecoMapper;
+import gft.entities.Etiqueta;
+
+public class ClienteMapper {
+	
+	public static Etiqueta fromDTO(RegistroClienteDTO dto) {
+		return new Etiqueta(null, dto.getCpf(), dto.getNome(), dto.getTelefone(),
+				 				 dto.getEmail(), EnderecoMapper.fromDTO(dto.getEndereco()));
+	}
+	
+	public static ConsultaClienteDTO fromEntity(Etiqueta cliente) {
+		return new ConsultaClienteDTO(cliente.getId(), cliente.getCpf(), cliente.getNome(), cliente.getTelefone(),
+									  cliente.getEmail(), EnderecoMapper.fromEntity(cliente.getEndereco()));
+	}
+}

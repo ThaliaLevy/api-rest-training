@@ -1,0 +1,14 @@
+package com.levythalia.springsecurity.securityJwt;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+@Service
+public class JwtTokenProvider {
+
+	@Value("${loja.jwt.secret:secret}")
+	private String secretKey = "secret";
+	
+	@Value("${loja.jwt.expiration:600000}")
+	private String validadeEmMilissegundos = "expiration"; //1 minuto
+}

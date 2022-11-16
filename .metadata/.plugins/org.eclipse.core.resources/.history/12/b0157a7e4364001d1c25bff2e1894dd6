@@ -1,0 +1,48 @@
+package gft.services;
+
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import gft.entities.Etiqueta;
+import gft.exception.EntityNotFoundException;
+import gft.repositories.EtiquetaRepository;
+
+@Service
+public class EtiquetaService {
+
+	private final EtiquetaRepository clienteRepository;
+
+	public EtiquetaService(EtiquetaRepository clienteRepository) {
+		this.clienteRepository = clienteRepository;
+	}
+
+	public Etiqueta salvarCliente(Etiqueta cliente) {
+		return clienteRepository.save(cliente);
+	}
+
+	public Page<Etiqueta> listarTodosOsClientes(Pageable pageable) {
+		return clienteRepository.findAll(pageable);
+	}
+
+	public Etiqueta buscarCliente(Long id) {
+		Optional<Etiqueta> optional = clienteRepository.findById(id);
+
+		return optional.orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado!"));
+	}
+
+	public Etiqueta atualizarCliente(Etiqueta cliente, Long id) {
+		Etiqueta clienteOriginal = this.buscarCliente(id);
+		cliente.setId(clienteOriginal.getId());
+
+		return clienteRepository.save(cliente);
+	}
+
+	public void excluirCliente(Long id) {
+		Etiqueta clienteServiceOriginal = this.buscarCliente(id);
+
+		clienteRepository.delete(clienteServiceOriginal);
+	}
+}

@@ -1,0 +1,5 @@
+package com.levythalia.springsecurity.repositories;
+
+public class UserRepository {
+
+}

@@ -1,0 +1,20 @@
+package gft.repositories;
+
+import java.util.Collection;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import gft.entities.Etiqueta;
+
+@Repository
+public interface EtiquetaRepository extends JpaRepository<Etiqueta, Long> {
+	//@Query("SELECT u FROM Etiqueta u WHERE u.nome =: nomeNovaEtiqueta")
+	Collection<Etiqueta> findByNome(String nomeNovaEtiqueta);
+	
+	Page<Etiqueta> findAll(Pageable pageable);
+	
+}

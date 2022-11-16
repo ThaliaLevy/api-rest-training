@@ -1,0 +1,117 @@
+package com.levythalia.springsecurity.security.jwt;
+
+import java.util.Base64;
+import java.util.Date;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.levythalia.springsecurity.exceptions.InvalidJwtAuthenticationException;
+import com.levythalia.springsecurity.view.TokenVO;
+
+@Service
+public class JwtTokenProvider {
+
+	@Value("${loja.jwt.secret:secret}")	//lê das properties
+	private String secretKey = "secret";
+	
+	@Value("${loja.jwt.expiration:600000}")
+	private long validadeEmMilissegundos = 600000; //1 minuto
+	
+	private final UserDetailsService userDetailsService;
+
+	public JwtTokenProvider(UserDetailsService userDetailsService) {
+		this.userDetailsService = userDetailsService;
+	}
+	
+	Algorithm algorithm = null;
+	
+	 /* - Naturalmente os frameworks só permitem fazer algo com as classes, inclusive injeção de dependencias, apenas 
+	  * após a total inicialização do sistema. Nesse caso está sendo usado para que seja permitido injetar antes de chamar construtores. 
+	  * - Linha 35: pega um valor, cripgrafa e de o devolve. */
+	@PostConstruct
+	protected void init() {
+		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+		algorithm = Algorithm.HMAC256(secretKey.getBytes());
+	}
+	
+	public TokenVO createAccessToken(String email, String permission) {
+		Date dataDeHoje = new Date();
+		Date validadeToken = new Date(dataDeHoje.getTime() + validadeEmMilissegundos);
+		var accessToken = getAccessToken(email, permission, dataDeHoje, validadeToken);
+		var refreshToken = getRefreshToken(email, permission, dataDeHoje);
+		return new TokenVO(email, true, dataDeHoje, validadeToken, accessToken, refreshToken);
+	}
+
+	private String getAccessToken(String email, String permission, Date dataDeHoje, Date validadeToken) {
+		String urlServidorOndeGeraOToken = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+		return JWT.create()
+				  .withClaim("permission", permission)
+				  .withIssuedAt(dataDeHoje)
+				  .withExpiresAt(validadeToken)
+				  .withSubject(email)
+				  .withIssuer(urlServidorOndeGeraOToken)
+				  .sign(algorithm)
+				  .strip();
+	}
+
+	private String getRefreshToken(String email, String permission, Date dataDeHoje) {
+		Date validadeRefreshToken = new Date(dataDeHoje.getTime() + (validadeEmMilissegundos * 2)); //aumentar validade token em 2x (2 minutos)
+		return JWT.create()
+				  .withClaim("permission", permission)
+				  .withIssuedAt(dataDeHoje)
+				  .withExpiresAt(validadeRefreshToken)
+				  .withSubject(email)
+				  .sign(algorithm)
+				  .strip();
+	}
+	
+	public Authentication getAuthentication(String token) {
+		DecodedJWT decodedJWT = decodedToken(token);
+		UserDetails usuarioAutenticado = this.userDetailsService.loadUserByUsername(decodedJWT.getSubject());
+		
+		return new UsernamePasswordAuthenticationToken(usuarioAutenticado, "",  usuarioAutenticado.getAuthorities()); // .getAuthorities() -> perfis que um usuario tem 
+	}
+
+	private DecodedJWT decodedToken(String token) {
+		Algorithm algorithmDecoded = Algorithm.HMAC256(secretKey.getBytes());
+		JWTVerifier verificaAlgoritmoParaAbrirToken = JWT.require(algorithmDecoded).build();
+		DecodedJWT decodificarOToken = verificaAlgoritmoParaAbrirToken.verify(token);
+		return decodificarOToken;
+	}
+	
+	//verificar se o token é válido ao ser usado para requisiçao
+	public String resolveToken(HttpServletRequest httpServletRequest) {
+		String bearerToken = httpServletRequest.getHeader("Authorization");
+		if(bearerToken != null && bearerToken.startsWith("Bearer ")) {
+			return bearerToken.substring("Bearer ".length());
+		}
+		
+		return null;
+	}
+	
+	//validar token
+	public boolean validateToken(String token) {
+		DecodedJWT decodedJWT = decodedToken(token);
+		try { // pega a data atual e verifica se é menor que a da expiração
+			if(decodedJWT.getExpiresAt().before(new Date())) {
+				return false;
+			}
+			return true;
+		} catch (Exception e) {
+			throw new InvalidJwtAuthenticationException("Token expirado ou inválido!");
+		}
+	}
+}

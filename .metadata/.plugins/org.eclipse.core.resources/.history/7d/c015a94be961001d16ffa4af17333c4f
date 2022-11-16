@@ -1,0 +1,12 @@
+package com.levythalia.springsecurity;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+
+
+public class Permission {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+}

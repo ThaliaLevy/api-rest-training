@@ -1,0 +1,92 @@
+package gft.services;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import gft.entities.Etiqueta;
+import gft.entities.Usuario;
+import gft.exception.EntityNotFoundException;
+import gft.repositories.EtiquetaRepository;
+
+@Service
+public class EtiquetaService {
+
+	private final EtiquetaRepository etiquetaRepository;
+
+	public EtiquetaService(EtiquetaRepository etiquetaRepository) {
+		this.etiquetaRepository = etiquetaRepository;
+	}
+
+	public boolean verificarSeEtiquetaJaExiste(Etiqueta etiqueta) {
+		String nomeNovaEtiqueta = etiqueta.getNome();
+		//Collection<Etiqueta> etiquetaDoRepository = etiquetaRepository.findByNome(nomeNovaEtiqueta);
+		List<Etiqueta> etiquetaDoRepository = null;
+		int i = 0;
+		
+			etiquetaDoRepository = etiquetaRepository.findEtiquetaUsuarios();
+			
+			for(Usuario item : etiqueta.getUsuarios()){
+				if(item == etiquetaDoRepository) {
+					System.out.println(etiquetaDoRepository);
+				}
+			}
+			
+			
+			 
+		//	 i++;
+      //  }
+		
+		 
+		 
+		/*  for(Usuario item : etiqueta.getUsuarios()){
+	            etiquetaDoRepository = etiquetaRepository.findByNomeAndUsuarios(nomeNovaEtiqueta, item);
+	            System.out.println(etiquetaDoRepository);
+	        }
+		 
+		
+		*/
+		
+
+		
+		
+		if(etiquetaDoRepository.isEmpty()) {
+			return false;
+		}
+		return false;
+	}
+	
+	public Etiqueta salvarEtiqueta(Etiqueta etiqueta) {
+		if(verificarSeEtiquetaJaExiste(etiqueta) == false) {
+			return etiquetaRepository.save(etiqueta);
+		}
+		
+		return null;
+	}
+
+	public Page<Etiqueta> listarTodaAsEtiquetas(Pageable pageable) {
+		return etiquetaRepository.findAll(pageable);
+	}
+
+	public Etiqueta buscarEtiqueta(Long id) {
+		Optional<Etiqueta> optional = etiquetaRepository.findById(id);
+
+		return optional.orElseThrow(() -> new EntityNotFoundException("Etiqueta não encontrada!"));
+	}
+
+	public Etiqueta atualizarEtiqueta(Etiqueta etiqueta, Long id) {
+		Etiqueta etiquetaOriginal = this.buscarEtiqueta(id);
+		etiqueta.setId(etiquetaOriginal.getId());
+
+		return etiquetaRepository.save(etiqueta);
+	}
+
+	public void excluirEtiqueta(Long id) {
+		Etiqueta etiquetaServiceOriginal = this.buscarEtiqueta(id);
+
+		etiquetaRepository.delete(etiquetaServiceOriginal);
+	}
+}

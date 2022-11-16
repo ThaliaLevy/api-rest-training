@@ -1,0 +1,47 @@
+package com.levythalia.springsecurity.services;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.levythalia.springsecurity.repositories.UserRepository;
+import com.levythalia.springsecurity.security.jwt.JwtTokenProvider;
+import com.levythalia.springsecurity.view.AccountCredentialsVO;
+import com.levythalia.springsecurity.view.TokenVO;
+
+@Service
+public class AuthService {
+	
+	private final JwtTokenProvider tokenProvider;
+	private final AuthenticationManager authenticationManager;
+	private final UserRepository repository;
+
+	public AuthService(JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository) {
+		this.tokenProvider = tokenProvider;
+		this.authenticationManager = authenticationManager;
+		this.repository = repository;
+	}
+
+	public ResponseEntity signin(AccountCredentialsVO data) {
+		try {
+			var email = data.getEmail();
+			var senha = data.getSenha();
+			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, senha));
+			
+			var user = repository.findByEmail(email);
+			var tokenReponse = new TokenVO();
+			if(user != null) {
+				tokenReponse = tokenProvider.createAccessToken(email, user.getRoles());
+			} else {
+				throw new UsernameNotFoundException("Email " + email + " não encontrado!");
+			}
+			
+			return ResponseEntity.ok();
+		} catch (Exception e) {
+			throw new BadCredentialsException("Email ou senha inválido!");
+		}
+	}
+}

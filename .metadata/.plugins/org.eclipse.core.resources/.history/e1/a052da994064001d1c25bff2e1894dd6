@@ -1,0 +1,15 @@
+package gft.dto.cliente;
+
+import gft.entities.Etiqueta;
+
+public class ClienteMapper {
+	
+	public static Etiqueta fromDTO(RegistroClienteDTO dto) {
+		return new Etiqueta(null, dto.getCpf(), dto.getNome(), dto.getTelefone(),
+				 				 dto.getEmail());
+	}
+	
+	public static ConsultaClienteDTO fromEntity(Etiqueta cliente) {
+		return new ConsultaClienteDTO(cliente.getId(), cliente.getNome());
+	}
+}

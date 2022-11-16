@@ -1,0 +1,55 @@
+package gft.dto.usuario;
+
+public class RegistroEtiquetaDTO {
+
+	private Long id;
+	private String nome;
+	private String email;
+
+	public RegistroEtiquetaDTO() {}
+
+	public RegistroEtiquetaDTO(Long id, String email, Long filialId) {
+		this.email = email;
+		this.filialId = filialId;
+	}
+	
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	public Long getPerfilId() {
+		return perfilId;
+	}
+
+	public void setPerfilId(Long perfilId) {
+		this.perfilId = perfilId;
+	}
+
+	public Long getFilialId() {
+		return filialId;
+	}
+
+	public void setFilialId(Long filialId) {
+		this.filialId = filialId;
+	}
+}

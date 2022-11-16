@@ -1,0 +1,60 @@
+package com.levythalia.springsecurity.securityJwt;
+
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
+
+import com.auth0.jwt.algorithms.Algorithm;
+import com.levythalia.springsecurity.view.TokenVO;
+
+@Service
+public class JwtTokenProvider {
+
+	@Value("${loja.jwt.secret:secret}")
+	private String secretKey = "secret";
+	
+	@Value("${loja.jwt.expiration:600000}")
+	private long validadeEmMilissegundos = 600000; //1 minuto
+	
+	private final UserDetailsService userDetailsService;
+
+	public JwtTokenProvider(UserDetailsService userDetailsService) {
+		this.userDetailsService = userDetailsService;
+	}
+	
+	Algorithm algorithm = null;
+	
+	 /* - Naturalmente os frameworks só permitem fazer algo com as classes, inclusive injeção de dependencias, apenas 
+	  * após a total inicialização do sistema. Nesse caso está sendo usado para que seja permitido injetar antes de chamar construtores. 
+	  * - Linha 35: pega um valor, cripgrafa e de o devolve. */
+	@PostConstruct
+	protected void init() {
+		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+		algorithm = Algorithm.HMAC256(secretKey.getBytes());
+	}
+	
+	public TokenVO createAccessToken(String email, String permission) {
+		Date dataDeHoje = new Date();
+		Date validade = new Date(dataDeHoje.getTime() + validadeEmMilissegundos);
+		var accessToken = getAccessToken(email, permission, dataDeHoje, validade);
+		var refreshToken = getAccessToken(email, permission, dataDeHoje);
+		return new TokenVO(email, true, dataDeHoje, validade, accessToken, refreshToken);
+	}
+
+	private String getAccessToken(String email, String permission, Date dataDeHoje) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private String getAccessToken(String email, String permission, Date dataDeHoje, Date validade) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

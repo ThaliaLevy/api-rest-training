@@ -1,0 +1,3 @@
+1668346741568	Rename method 'getAccessToken'
+1668346772876	Rename method 'getAccessRefresh'
+1668390587389	Rename package 'com.levythalia.springsecurity.securityJwt'
