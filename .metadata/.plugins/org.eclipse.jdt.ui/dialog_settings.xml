@@ -122,4 +122,12 @@
 		<item key="DIALOG_HEIGHT" value="1069"/>
 		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-18|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
 	</section>
+	<section name="nls_accessor_history">
+		<section name="0">
+			<item key="accessorName" value="Messages"/>
+			<item key="accessorPackage" value="=ConsumindoAPI/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;gft.services"/>
+			<item key="bundleName" value="messages.properties"/>
+			<item key="bundlePackage" value="=ConsumindoAPI/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;gft.services"/>
+		</section>
+	</section>
 </section>

@@ -1,12 +1,12 @@
 package gft.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gft.dto.etiqueta.ConsultaEtiquetaDTO;
 import gft.dto.etiqueta.EtiquetaMapper;
 import gft.dto.etiqueta.RegistroEtiquetaDTO;
 import gft.entities.Etiqueta;
@@ -22,14 +22,37 @@ public class EtiquetaController {
 		this.etiquetaService = etiquetaService;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@PostMapping("/vincular")
-	public ResponseEntity<ConsultaEtiquetaDTO> salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) {
+	public ResponseEntity salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) {
 		Etiqueta etiqueta = etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(dto));
-		return ResponseEntity.ok(EtiquetaMapper.fromEntity(etiqueta));
+		
+		if(etiqueta == null) {
+			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta já existe!");
+		}
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body("Etiqueta vinculada com sucesso!");
 	}
 
 	
 /*
+ * 
+ * public ResponseEntity salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) {
+		
+		List<Usuario> usuarios = dto.getUsuarios()
+				 .stream()
+				 .map(i -> new Usuario(null))
+				 .collect(Collectors.toList());
+		
+
+		Etiqueta etiqueta = etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(dto));
+		
+		if(etiqueta == null) {
+			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta já existe!");
+		}
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body("Etiqueta vinculada com sucesso!");
+	}
 	
 	@GetMapping("{id}") // localhost:8080/v1/filiais/1 -> /1 se eu quiser id = 1
 	public ResponseEntity<ConsultaEtiquetaDTO> buscarEtiqueta(@PathVariable Long id) {

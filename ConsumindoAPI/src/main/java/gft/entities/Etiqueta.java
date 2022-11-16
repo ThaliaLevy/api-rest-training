@@ -26,6 +26,8 @@ public class Etiqueta {
 											  inverseJoinColumns= {@JoinColumn(name = "usuario_id")})
 	private List<Usuario> usuarios;
 
+	public Etiqueta() {}
+
 	public Etiqueta(Long id, String nome, List<Usuario> usuarios) {
 		this.id = id;
 		this.nome = nome;
@@ -55,4 +57,11 @@ public class Etiqueta {
 	public void setUsuarios(List<Usuario> usuarios) {
 		this.usuarios = usuarios;
 	}
+
+	@Override
+	public String toString() {
+		return id + "";
+	}
+	
+	
 }

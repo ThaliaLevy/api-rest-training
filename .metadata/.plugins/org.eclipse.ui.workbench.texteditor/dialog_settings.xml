@@ -6,8 +6,11 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value=""/>
+		<item key="selection" value="listaUsuarios"/>
 		<list key="findhistory">
+			<item value="listaItens"/>
+			<item value="RegistroUsuarioDTO"/>
+			<item value="ConsultaUsuarioDTO"/>
 			<item value="nome"/>
 			<item value="clien"/>
 			<item value="(cliente)"/>
@@ -20,11 +23,10 @@
 			<item value="registro"/>
 			<item value="cliente"/>
 			<item value="userRepository"/>
-			<item value="tokenReponse"/>
-			<item value="description"/>
-			<item value="documentationPluginsBootstrapper"/>
 		</list>
 		<list key="replacehistory">
+			<item value="listaUsuarios"/>
+			<item value="Usuario"/>
 			<item value="(etiqueta)"/>
 			<item value="etiquetaRepository"/>
 			<item value="y(etiqueta)"/>
@@ -38,8 +40,6 @@
 			<item value="(Double numberOne, Double numberTwo)"/>
 			<item value=""/>
 			<item value="numberOne"/>
-			<item value="numberTwo"/>
-			<item value="(numberOne)"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">

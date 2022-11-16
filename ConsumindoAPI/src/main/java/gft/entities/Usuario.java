@@ -33,7 +33,7 @@ public class Usuario implements UserDetails {
 	@ManyToOne
 	private Perfil perfil;
 	
-	@ManyToMany(mappedBy = "usuarios")	//etiquetas tem que achar "usuario" 
+	@ManyToMany(mappedBy = "usuarios")	
 	private List<Etiqueta> etiquetas;
 
 	public Usuario() {}
@@ -44,6 +44,10 @@ public class Usuario implements UserDetails {
 		this.email = email;
 		this.senha = senha;
 		this.perfil = perfil;
+	}
+
+	public Usuario(Long id) {
+		this.id = id;
 	}
 
 	public Long getId() {
