@@ -26,17 +26,18 @@ public class Usuario implements UserDetails {
 	private Long id;
 	private String nome;
 	private String email;
-	
+
 	@JsonIgnore
 	private String senha;
 
 	@ManyToOne
 	private Perfil perfil;
-	
-	@ManyToMany(mappedBy = "usuarios")	
+
+	@ManyToMany(mappedBy = "usuarios")
 	private List<Etiqueta> etiquetas;
 
-	public Usuario() {}
+	public Usuario() {
+	}
 
 	public Usuario(Long id, String nome, String email, String senha, Perfil perfil) {
 		this.id = id;
@@ -44,6 +45,11 @@ public class Usuario implements UserDetails {
 		this.email = email;
 		this.senha = senha;
 		this.perfil = perfil;
+	}
+
+	public Usuario(Long id, List<Etiqueta> etiquetas) {
+		this.id = id;
+		this.etiquetas = etiquetas;
 	}
 
 	public Usuario(Long id) {
@@ -88,6 +94,14 @@ public class Usuario implements UserDetails {
 
 	public void setPerfil(Perfil perfil) {
 		this.perfil = perfil;
+	}
+
+	public List<Etiqueta> getEtiquetas() {
+		return etiquetas;
+	}
+
+	public void setEtiquetas(List<Etiqueta> etiquetas) {
+		this.etiquetas = etiquetas;
 	}
 
 	@Override

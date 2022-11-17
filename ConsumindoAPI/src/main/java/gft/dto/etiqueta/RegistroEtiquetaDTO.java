@@ -6,22 +6,14 @@ import gft.entities.Usuario;
 
 public class RegistroEtiquetaDTO {
 
-	private String nome;
 	private List<Usuario> usuarios;
+	private String etiqueta;
 	
 	public RegistroEtiquetaDTO() {}
 
-	public RegistroEtiquetaDTO(String nome, List<Usuario> usuarios) {
-		this.nome = nome;
+	public RegistroEtiquetaDTO(List<Usuario> usuarios, String etiqueta) {
 		this.usuarios = usuarios;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
+		this.etiqueta = etiqueta;
 	}
 
 	public List<Usuario> getUsuarios() {
@@ -30,5 +22,13 @@ public class RegistroEtiquetaDTO {
 
 	public void setUsuarios(List<Usuario> usuarios) {
 		this.usuarios = usuarios;
+	}
+
+	public String getEtiqueta() {
+		return etiqueta;
+	}
+
+	public void setEtiqueta(String etiqueta) {
+		this.etiqueta = etiqueta;
 	}
 }

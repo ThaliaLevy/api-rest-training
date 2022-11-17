@@ -1,0 +1,15 @@
+package gft.dto.usuario;
+
+import java.util.List;
+
+import gft.entities.Etiqueta;
+
+public class RegistroUsuarioParaEtiquetaDTO {
+
+	private Long usuarioId;
+	private List<String> nomeEtiqueta;
+
+	public RegistroUsuarioParaEtiquetaDTO() {}
+
+	
+}

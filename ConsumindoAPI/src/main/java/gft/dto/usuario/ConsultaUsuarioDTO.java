@@ -27,6 +27,4 @@ public class ConsultaUsuarioDTO {
 	public void setNomePerfil(String nomePerfil) {
 		this.nomePerfil = nomePerfil;
 	}
-
-	
 }

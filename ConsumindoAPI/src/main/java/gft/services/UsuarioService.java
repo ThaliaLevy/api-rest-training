@@ -13,19 +13,18 @@ import gft.repositories.UsuarioRepository;
 @Service
 public class UsuarioService implements UserDetailsService {
 
-private final UsuarioRepository usuarioRepository;
-	
+	private final UsuarioRepository usuarioRepository;
+
 	public UsuarioService(UsuarioRepository usuarioRepository) {
 		this.usuarioRepository = usuarioRepository;
 	}
-	
+
 	public Usuario buscarUsuarioPorEmail(String email) {
 		Optional<Usuario> optional = usuarioRepository.findByEmail(email);
-		
-		if(optional.isEmpty()) {
+
+		if (optional.isEmpty()) {
 			throw new UsernameNotFoundException("Usuário não encontrado!");
 		}
-		
 		return optional.get();
 	}
 
@@ -36,8 +35,8 @@ private final UsuarioRepository usuarioRepository;
 
 	public Usuario buscarUsuarioPorId(Long idUsuario) {
 		Optional<Usuario> optional = usuarioRepository.findById(idUsuario);
-		
-		if(optional.isEmpty()) {
+
+		if (optional.isEmpty()) {
 			throw new RuntimeException("Usuário não encontrado!");
 		}
 		return optional.get();

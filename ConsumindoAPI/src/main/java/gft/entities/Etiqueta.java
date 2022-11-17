@@ -62,6 +62,4 @@ public class Etiqueta {
 	public String toString() {
 		return "" + id;
 	}
-	
-	
 }

@@ -1,0 +1,34 @@
+package gft.dto.usuario;
+
+import java.util.List;
+
+import gft.entities.Etiqueta;
+
+public class RegistroUsuarioParaEtiquetaDTO {
+
+	private Long usuarioId;
+	private Etiqueta etiqueta;
+
+	public RegistroUsuarioParaEtiquetaDTO() {}
+
+	public RegistroUsuarioParaEtiquetaDTO(Long usuarioId, Etiqueta etiqueta) {
+		this.usuarioId = usuarioId;
+		this.etiqueta = etiqueta;
+	}
+
+	public Long getUsuarioId() {
+		return usuarioId;
+	}
+
+	public void setUsuarioId(Long usuarioId) {
+		this.usuarioId = usuarioId;
+	}
+
+	public Etiqueta getEtiquetas() {
+		return etiqueta;
+	}
+
+	public void setEtiquetas(Etiqueta etiqueta) {
+		this.etiqueta = etiqueta;
+	}
+}

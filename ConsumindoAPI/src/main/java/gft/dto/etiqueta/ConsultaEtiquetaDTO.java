@@ -27,5 +27,4 @@ public class ConsultaEtiquetaDTO {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-
 }

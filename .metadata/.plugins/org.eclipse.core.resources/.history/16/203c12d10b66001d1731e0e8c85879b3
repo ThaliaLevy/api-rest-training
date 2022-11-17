@@ -1,0 +1,5 @@
+ackage gft.dto.usuario;
+
+public class VincularEtiquetaAoUsuarioDTO {
+
+}

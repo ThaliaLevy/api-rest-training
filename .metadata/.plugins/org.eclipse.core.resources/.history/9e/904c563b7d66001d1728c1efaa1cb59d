@@ -1,0 +1,85 @@
+package gft.services;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import gft.entities.Etiqueta;
+import gft.exception.EntityNotFoundException;
+import gft.repositories.EtiquetaRepository;
+
+@Service
+public class EtiquetaService {
+
+	private final EtiquetaRepository etiquetaRepository;
+
+	public EtiquetaService(EtiquetaRepository etiquetaRepository) {
+		this.etiquetaRepository = etiquetaRepository;
+	}
+
+	public Collection<Etiqueta> verificarSeEtiquetaJaExisteParaUsuario(Etiqueta etiqueta) {
+		return etiquetaRepository.findByNomeAndUsuariosIn(etiqueta.getNome(), etiqueta.getUsuarios());
+	}
+	
+	public Etiqueta atualizarEtiqueta(Etiqueta etiqueta, Long id) {
+		Etiqueta etiquetaOriginal = this.buscarEtiqueta(id);
+		etiqueta.setId(etiquetaOriginal.getId());
+
+		
+		return etiquetaRepository.save(etiqueta);
+	}
+	
+	public Etiqueta salvarEtiqueta(Etiqueta etiqueta) {
+		Etiqueta etiquetaExistente = buscarEtiquetaPorNome(etiqueta.getNome());
+		System.out.println(etiquetaExistente);
+		if (etiquetaExistente == null) {
+			etiquetaRepository.save(etiqueta);
+			return etiqueta;
+		} else {
+			/*if (verificarSeEtiquetaJaExisteParaUsuario(etiqueta).isEmpty()) {
+				atualizarEtiqueta(etiqueta, etiquetaExistente.getId());
+				return etiqueta;
+			} */
+		}
+		return null;
+
+		/*
+		 * if(verificarSeEtiquetaJaExisteParaUsuario(etiqueta).isEmpty()) {
+		 * 
+		 * if(objetoDoBanco == null) {
+		 * 
+		 * } System.out.println(objetoDoBanco); //atualizarEtiqueta(etiqueta,
+		 * objetoDoBanco);
+		 * 
+		 * //etiquetaRepository.save(etiqueta); return etiqueta; } //tentar usar Set
+		 */
+		// cascade pra nao repetir - carregar objo pra memoria quando chamar
+		// pegar usuario e atualizar ele só adicionadno a nova etiqueta
+	}
+
+
+	public Page<Etiqueta> listarTodaAsEtiquetas(Pageable pageable) {
+		return etiquetaRepository.findAll(pageable);
+	}
+
+	public Etiqueta buscarEtiquetaPorNome(String nome) {
+		Optional<Etiqueta> optional = Optional.of(etiquetaRepository.findByNome(nome));
+		return optional.orElseThrow(() -> new EntityNotFoundException("Etiqueta não encontrada!"));
+	}
+
+	public Etiqueta buscarEtiqueta(Long id) {
+		Optional<Etiqueta> optional = etiquetaRepository.findById(id);
+
+		return optional.orElseThrow(() -> new EntityNotFoundException("Etiqueta não encontrada!"));
+	}
+
+	public void excluirEtiqueta(Long id) {
+		Etiqueta etiquetaServiceOriginal = this.buscarEtiqueta(id);
+
+		etiquetaRepository.delete(etiquetaServiceOriginal);
+	}
+}

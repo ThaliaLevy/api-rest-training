@@ -1,0 +1,14 @@
+package gft.dto.usuario;
+
+import gft.entities.Usuario;
+
+public class UsuarioParaEtiquetaMapper {
+
+	public static Usuario fromDTO(RegistroUsuarioParaEtiquetaDTO dto, Long usuarioId) {
+		return new Usuario(usuarioId, dto.getEtiquetas());
+	}
+	
+	public static ConsultaUsuarioParaEtiquetaDTO fromEntity(Usuario usuario) {
+		return new ConsultaUsuarioParaEtiquetaDTO(usuario.getId());
+	}
+}

@@ -1,0 +1,24 @@
+package gft.dto.etiqueta;
+
+import gft.dto.usuario.RegistroUsuarioParaEtiquetaDTO;
+import gft.entities.Etiqueta;
+import gft.entities.Usuario;
+import java.util.*;
+
+public class EtiquetaMapper {
+
+	public static Etiqueta fromDTO(Usuario usuario, RegistroUsuarioParaEtiquetaDTO dto) {
+		List<Usuario> usuarios = new ArrayList<>();
+		usuarios.add(usuario);
+	
+	/*	for(int i = 0; i < dto.getEtiquetas().size(); i++) {
+			
+		}*/
+		
+		return null;
+	}
+
+	public static ConsultaEtiquetaDTO fromEntity(Etiqueta etiqueta) {
+		return new ConsultaEtiquetaDTO(etiqueta.getId(), etiqueta.getNome());
+	}
+}

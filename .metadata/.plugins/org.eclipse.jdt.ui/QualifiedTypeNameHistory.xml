@@ -38,9 +38,17 @@
     <fullyQualifiedTypeName name="org.springframework.security.authentication.UsernamePasswordAuthenticationToken"/>
     <fullyQualifiedTypeName name="org.springframework.security.core.userdetails.UsernameNotFoundException"/>
     <fullyQualifiedTypeName name="javax.persistence.Entity"/>
-    <fullyQualifiedTypeName name="gft.dto.usuario.RegistroUsuarioParaEtiquetaDTO"/>
     <fullyQualifiedTypeName name="org.springframework.http.HttpStatus"/>
     <fullyQualifiedTypeName name="org.springframework.data.jpa.repository.Query"/>
-    <fullyQualifiedTypeName name="java.util.Collection"/>
     <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="org.hibernate.Query"/>
+    <fullyQualifiedTypeName name="javax.persistence.Query"/>
+    <fullyQualifiedTypeName name="javax.management.Query"/>
+    <fullyQualifiedTypeName name="java.util.Collection"/>
+    <fullyQualifiedTypeName name="org.hibernate.mapping.List"/>
+    <fullyQualifiedTypeName name="gft.dto.usuario.RegistroUsuarioParaEtiquetaDTO"/>
+    <fullyQualifiedTypeName name="gft.dto.usuario.UsuarioParaEtiquetaMapper"/>
+    <fullyQualifiedTypeName name="gft.entities.Etiqueta"/>
+    <fullyQualifiedTypeName name="gft.entities.Usuario"/>
+    <fullyQualifiedTypeName name="antlr.collections.List"/>
 </qualifiedTypeNameHistroy>

@@ -37,11 +37,10 @@ public class FiltroAutenticacao extends OncePerRequestFilter {
 		
 		if(autenticacaoService.verificaToken(token)) {
 			Long idUsuario = autenticacaoService.retornarIdUsuario(token);
-			Usuario usuario = usuarioService.buscarUsuarioPorId(idUsuario);												// .getAuthorities() -> perfis que um usuario tem 
+			Usuario usuario = usuarioService.buscarUsuarioPorId(idUsuario);												
 			SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities()));
 		}
 		
 		filterChain.doFilter(request, response);
 	}
-
 }

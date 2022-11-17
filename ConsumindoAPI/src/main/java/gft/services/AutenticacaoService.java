@@ -43,7 +43,6 @@ public class AutenticacaoService {
 		return new TokenDTO(token);
 	}
 
-	// é por esse metodo que há o reconhecimento dos tokens
 	private Algorithm criarAlgoritmo() {
 		return Algorithm.HMAC256(secret);
 	}

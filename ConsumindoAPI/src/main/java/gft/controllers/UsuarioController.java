@@ -1,16 +1,21 @@
 package gft.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import gft.dto.etiqueta.EtiquetaMapper;
+import gft.dto.etiqueta.RegistroEtiquetaDTO;
 import gft.dto.usuario.ConsultaUsuarioDTO;
 import gft.dto.usuario.RegistroUsuarioDTO;
 import gft.dto.usuario.UsuarioMapper;
+import gft.entities.Etiqueta;
 import gft.entities.Usuario;
+import gft.services.EtiquetaService;
 import gft.services.UsuarioService;
 
 @RestController
@@ -18,9 +23,11 @@ import gft.services.UsuarioService;
 public class UsuarioController {
 
 	private final UsuarioService usuarioService;
+	private final EtiquetaService etiquetaService;
 
-	public UsuarioController(UsuarioService usuarioService) {
+	public UsuarioController(UsuarioService usuarioService, EtiquetaService etiquetaService) {
 		this.usuarioService = usuarioService;
+		this.etiquetaService = etiquetaService;
 	}
 
 	@PostMapping
@@ -28,11 +35,18 @@ public class UsuarioController {
 		Usuario usuario = usuarioService.salvarUsuario(UsuarioMapper.fromDTO(dto));
 		return ResponseEntity.ok(UsuarioMapper.fromEntity(usuario));
 	}
-	
-	//senha teste (oi): $2a$10$Ueu8/ocgoGeoljwf6QA2IuXn5wWIggBYYgqbkanieZ5.vlf8VmnZa 
-	
-	public static void main(String args[]) {
-		BCryptPasswordEncoder b = new BCryptPasswordEncoder();
-		System.out.println(b.encode("oi"));
+
+	@SuppressWarnings("rawtypes")
+	@PostMapping("/etiquetas/vincular")
+	public ResponseEntity salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) {
+		Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		Etiqueta etiqueta = etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(usuario, dto));
+
+		if (etiqueta == null) {
+			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta já está vinculada ao usuário!");
+		} else {
+			return ResponseEntity.status(HttpStatus.CREATED).body("Etiqueta vinculada com sucesso!");
+		}
 	}
 }
