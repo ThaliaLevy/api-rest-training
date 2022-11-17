@@ -3,3 +3,11 @@ usuario_id BIGINT NOT NULL,
 etiqueta_id BIGINT NOT NULL,
 FOREIGN KEY (usuario_id) REFERENCES tb_usuario(id),
 FOREIGN KEY (etiqueta_id) REFERENCES tb_etiquetas(id));
+
+INSERT INTO tb_usuario_etiquetas (usuario_id, etiqueta_id)
+VALUES
+   ('1', '2'),
+   ('1', '1'),
+   ('2', '3'),
+   ('1', '3'),
+   ('3', '1');

@@ -60,7 +60,7 @@ public class Etiqueta {
 
 	@Override
 	public String toString() {
-		return id + "";
+		return "" + id;
 	}
 	
 	

@@ -29,64 +29,10 @@ public class EtiquetaController {
 		
 		if(etiqueta == null) {
 			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta já existe!");
+		} else {
+			return ResponseEntity.status(HttpStatus.CREATED).body("Etiqueta vinculada com sucesso!");
 		}
 		
-		return ResponseEntity.status(HttpStatus.CREATED).body("Etiqueta vinculada com sucesso!");
-	}
-
-	
-/*
- * 
- * public ResponseEntity salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) {
 		
-		List<Usuario> usuarios = dto.getUsuarios()
-				 .stream()
-				 .map(i -> new Usuario(null))
-				 .collect(Collectors.toList());
-		
-
-		Etiqueta etiqueta = etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(dto));
-		
-		if(etiqueta == null) {
-			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta já existe!");
-		}
-		
-		return ResponseEntity.status(HttpStatus.CREATED).body("Etiqueta vinculada com sucesso!");
 	}
-	
-	@GetMapping("{id}") // localhost:8080/v1/filiais/1 -> /1 se eu quiser id = 1
-	public ResponseEntity<ConsultaEtiquetaDTO> buscarEtiqueta(@PathVariable Long id) {
-		Etiqueta etiqueta = etiquetaService.buscarEtiqueta(id);
-
-		return ResponseEntity.ok(EtiquetaMapper.fromEntity(etiqueta));
-	}
-
-	@GetMapping // map: converte o tipo de uma classe para outra
-	public ResponseEntity<Page<ConsultaEtiquetaDTO>> buscarEtiquetas(@PageableDefault Pageable pageable) {
-		return ResponseEntity.ok(etiquetaService.listarTodaAsEtiquetas(pageable).map(EtiquetaMapper::fromEntity));
-	}
-	
-	@PutMapping("{id}")
-	public ResponseEntity<ConsultaEtiquetaDTO> alterarEtiqueta(@RequestBody RegistroEtiquetaDTO dto, @PathVariable Long id) {
-		try {
-			Etiqueta etiqueta = etiquetaService.atualizarEtiqueta(EtiquetaMapper.fromDTO(dto), id);
-
-			return ResponseEntity.ok(EtiquetaMapper.fromEntity(etiqueta));
-		} catch (Exception e) {
-			return ResponseEntity.notFound().build();
-		}
-	}
-
-
-	@DeleteMapping("{id}")
-	public ResponseEntity<ConsultaEtiquetaDTO> excluirEtiqueta(@PathVariable Long id) {
-		try {
-			etiquetaService.excluirEtiqueta(id);
-
-			return ResponseEntity.ok().build();
-		} catch (Exception e) {
-			return ResponseEntity.notFound().build();
-		}
-
-	}*/
 }
