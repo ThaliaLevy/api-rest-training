@@ -1,5 +1,11 @@
 package gft.controllers;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +21,7 @@ import gft.dto.etiqueta.RegistroEtiquetaDTO;
 import gft.dto.usuario.RegistroUsuarioDTO;
 import gft.dto.usuario.UsuarioMapper;
 import gft.entities.Etiqueta;
+import gft.entities.HistoricoParametros;
 import gft.entities.ListaNoticias;
 import gft.entities.Usuario;
 import gft.services.EtiquetaService;
@@ -36,31 +43,34 @@ public class UsuarioController {
 	@PostMapping("/cadastrar")
 	public ResponseEntity salvarUsuario(@RequestBody RegistroUsuarioDTO dto) {
 		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
+
 		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
 			Usuario usuario = usuarioService.salvarUsuario(UsuarioMapper.fromDTO(dto));
 			return ResponseEntity.ok(UsuarioMapper.fromEntity(usuario));
 		}
-		
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Cadastro de usuários só pode ser realizado por perfil administrador.");
+
+		return ResponseEntity.status(HttpStatus.FORBIDDEN)
+				.body("Cadastro de usuários só pode ser realizado por perfil administrador.");
 	}
 
 	@SuppressWarnings("rawtypes")
 	@PostMapping("/etiquetas/vincular")
-	public ResponseEntity salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) {	
+	public ResponseEntity salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) {
 		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
+
 		if (usuarioAutenticado.getPerfil().getNome().equals("Usuario")) {
 			Etiqueta etiqueta = etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(usuarioAutenticado, dto));
 
 			if (etiqueta == null) {
-				return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta já está vinculada ao usuário!");
+				return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
+						.body("Etiqueta já está vinculada ao usuário!");
 			} else {
 				return ResponseEntity.status(HttpStatus.CREATED).body("Etiqueta vinculada ao usuário com sucesso!");
 			}
-		} 
-		
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Cadastro de etiquetas só pode ser realizado por perfil sem administrador.");
+		}
+
+		return ResponseEntity.status(HttpStatus.FORBIDDEN)
+				.body("Cadastro de etiquetas só pode ser realizado por perfil sem administrador.");
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -70,21 +80,55 @@ public class UsuarioController {
 		ListaNoticias noticias = etiquetaService.webClient(usuarioAutenticado, q, date);
 
 		if (noticias == null) {
-			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta não está cadastrada para o usuário.");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Etiqueta não está cadastrada para o usuário.");
 		} else {
 			return ResponseEntity.ok(noticias);
 		}
 	}
-	
+
+	@SuppressWarnings("rawtypes")
+	@GetMapping("/noticias/hoje")
+	public ResponseEntity obterRespostaApiNoticiasHoje(@RequestParam String q) throws ParseException {
+		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		ListaNoticias noticias = etiquetaService.webClient(usuarioAutenticado, q, verificarDataDeHoje());
+
+		if (noticias == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Etiqueta não está cadastrada para o usuário.");
+		} else {
+			return ResponseEntity.ok(noticias);
+		}
+	}
+
+	private String verificarDataDeHoje() {
+		Calendar c = Calendar.getInstance();
+		Date data = c.getTime();
+		DateFormat f = DateFormat.getDateInstance(DateFormat.DATE_FIELD);
+
+		return f.format(data);
+	}
+
 	@SuppressWarnings("rawtypes")
 	@GetMapping("/etiquetas-mais-acessadas")
 	public ResponseEntity visualizarEtiquetasMaisAcessadas() {
 		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
+
 		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
 			return ResponseEntity.ok(etiquetaService.listarEtiquetasMaisAcessadas());
-		} 
-		
+		}
+
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Histórico de etiquetas mais acessadas só pode ser visualizado por perfil administrador.");
+	}
+
+	@GetMapping("/parametros-acessados")
+	public List<HistoricoParametros> visualizarParametrosAcessadosHoje() {
+		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		List<HistoricoParametros> ocorrenciasDoIdDoUsuario = etiquetaService.visualizarParametrosAcessadosHoje(usuarioAutenticado, verificarDataDeHoje());
+		
+		if(ocorrenciasDoIdDoUsuario != null) {
+			return ocorrenciasDoIdDoUsuario;
+		}
+		return null;
 	}
 }

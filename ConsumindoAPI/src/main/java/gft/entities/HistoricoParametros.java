@@ -15,13 +15,15 @@ public class HistoricoParametros {
 	private Long id;
 	private String etiqueta;
 	private String data;
+	private Long idUsuario;
 	
 	public HistoricoParametros() {}
-	
-	public HistoricoParametros(Long id, String etiqueta, String data) {
+
+	public HistoricoParametros(Long id, String etiqueta, String data, Long idUsuario) {
 		this.id = id;
 		this.etiqueta = etiqueta;
 		this.data = data;
+		this.idUsuario = idUsuario;
 	}
 
 	public Long getId() {
@@ -46,5 +48,13 @@ public class HistoricoParametros {
 
 	public void setData(String data) {
 		this.data = data;
+	}
+
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 }
