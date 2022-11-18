@@ -36,8 +36,7 @@ public class Usuario implements UserDetails {
 	@ManyToMany(mappedBy = "usuarios")
 	private List<Etiqueta> etiquetas;
 
-	public Usuario() {
-	}
+	public Usuario() {}
 
 	public Usuario(Long id, String nome, String email, String senha, Perfil perfil) {
 		this.id = id;

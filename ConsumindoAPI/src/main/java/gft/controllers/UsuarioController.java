@@ -3,17 +3,19 @@ package gft.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gft.dto.etiqueta.EtiquetaMapper;
 import gft.dto.etiqueta.RegistroEtiquetaDTO;
-import gft.dto.usuario.ConsultaUsuarioDTO;
 import gft.dto.usuario.RegistroUsuarioDTO;
 import gft.dto.usuario.UsuarioMapper;
 import gft.entities.Etiqueta;
+import gft.entities.ListaNoticias;
 import gft.entities.Usuario;
 import gft.services.EtiquetaService;
 import gft.services.UsuarioService;
@@ -30,23 +32,59 @@ public class UsuarioController {
 		this.etiquetaService = etiquetaService;
 	}
 
-	@PostMapping
-	public ResponseEntity<ConsultaUsuarioDTO> salvarUsuario(@RequestBody RegistroUsuarioDTO dto) {
-		Usuario usuario = usuarioService.salvarUsuario(UsuarioMapper.fromDTO(dto));
-		return ResponseEntity.ok(UsuarioMapper.fromEntity(usuario));
+	@SuppressWarnings("rawtypes")
+	@PostMapping("/cadastrar")
+	public ResponseEntity salvarUsuario(@RequestBody RegistroUsuarioDTO dto) {
+		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
+			Usuario usuario = usuarioService.salvarUsuario(UsuarioMapper.fromDTO(dto));
+			return ResponseEntity.ok(UsuarioMapper.fromEntity(usuario));
+		}
+		
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Cadastro de usuários só pode ser realizado por perfil administrador.");
 	}
 
 	@SuppressWarnings("rawtypes")
 	@PostMapping("/etiquetas/vincular")
-	public ResponseEntity salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) {
-		Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public ResponseEntity salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) {	
+		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if (usuarioAutenticado.getPerfil().getNome().equals("Usuario")) {
+			Etiqueta etiqueta = etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(usuarioAutenticado, dto));
 
-		Etiqueta etiqueta = etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(usuario, dto));
+			if (etiqueta == null) {
+				return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta já está vinculada ao usuário!");
+			} else {
+				return ResponseEntity.status(HttpStatus.CREATED).body("Etiqueta vinculada ao usuário com sucesso!");
+			}
+		} 
+		
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Cadastro de etiquetas só pode ser realizado por perfil sem administrador.");
+	}
 
-		if (etiqueta == null) {
-			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta já está vinculada ao usuário!");
+	@SuppressWarnings("rawtypes")
+	@GetMapping("/noticias/antigas")
+	public ResponseEntity obterRespostaApiNoticiasAntigas(@RequestParam String q, @RequestParam String date) {
+		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ListaNoticias noticias = etiquetaService.webClient(usuarioAutenticado, q, date);
+
+		if (noticias == null) {
+			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta não está cadastrada para o usuário.");
 		} else {
-			return ResponseEntity.status(HttpStatus.CREATED).body("Etiqueta vinculada com sucesso!");
+			return ResponseEntity.ok(noticias);
 		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@GetMapping("/etiquetas-mais-acessadas")
+	public ResponseEntity visualizarEtiquetasMaisAcessadas() {
+		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
+			return ResponseEntity.ok(etiquetaService.listarEtiquetasMaisAcessadas());
+		} 
+		
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Histórico de etiquetas mais acessadas só pode ser visualizado por perfil administrador.");
 	}
 }

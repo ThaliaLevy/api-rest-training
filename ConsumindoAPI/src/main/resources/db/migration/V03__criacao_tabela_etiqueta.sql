@@ -4,6 +4,6 @@ nome VARCHAR(255) NOT NULL);
 
 INSERT INTO tb_etiquetas (nome)
 VALUES
-   ('Tecnologia'),
-   ('Musica'),
-   ('Teatro');
+   ('tecnologia'),
+   ('musica'),
+   ('teatro');

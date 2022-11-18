@@ -1,0 +1,97 @@
+package gft.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import gft.dto.etiqueta.EtiquetaMapper;
+import gft.dto.etiqueta.RegistroEtiquetaDTO;
+import gft.dto.usuario.ConsultaUsuarioDTO;
+import gft.dto.usuario.RegistroUsuarioDTO;
+import gft.dto.usuario.UsuarioMapper;
+import gft.entities.Etiqueta;
+import gft.entities.Noticia;
+import gft.entities.Usuario;
+import gft.services.EtiquetaService;
+import gft.services.UsuarioService;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@RestController
+@RequestMapping("v1/usuarios")
+public class UsuarioController {
+
+	private final UsuarioService usuarioService;
+	private final EtiquetaService etiquetaService;
+
+	public UsuarioController(UsuarioService usuarioService, EtiquetaService etiquetaService) {
+		this.usuarioService = usuarioService;
+		this.etiquetaService = etiquetaService;
+	}
+
+	@PostMapping
+	public ResponseEntity<ConsultaUsuarioDTO> salvarUsuario(@RequestBody RegistroUsuarioDTO dto) {
+		Usuario usuario = usuarioService.salvarUsuario(UsuarioMapper.fromDTO(dto));
+		return ResponseEntity.ok(UsuarioMapper.fromEntity(usuario));
+	}
+
+	@SuppressWarnings("rawtypes")
+	@PostMapping("/etiquetas/vincular")
+	public ResponseEntity salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) {
+		Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		Etiqueta etiqueta = etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(usuario, dto));
+
+		if (etiqueta == null) {
+			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta já está vinculada ao usuário!");
+		} else {
+			return ResponseEntity.status(HttpStatus.CREATED).body("Etiqueta vinculada com sucesso!");
+		}
+	}
+	
+	@Autowired
+	private WebClient webClient;
+	
+	@GetMapping("/api") 
+	public ResponseEntity<Noticia> obterRespostaApi(@RequestParam(value = "q", defaultValue= "tecnologia") String q,
+								   					@RequestParam(value = "date", defaultValue= "10/11/2022") String date){
+	// trecho vai no service, passando so o que preciso de atributo	
+		Mono<Noticia> monoNoticia =  this.webClient
+			.method(HttpMethod.GET)
+			.uri(uriBuilder -> uriBuilder
+					.path("api/")
+					.queryParam("q", q)
+					.queryParam("date", date)
+					.build())			//("/produtos/{codigo}", codigoProduto)
+			.retrieve()
+			.bodyToMono(Noticia.class);
+		
+		Noticia noticia = monoNoticia.block();
+		return ResponseEntity.ok(noticia);
+	}
+	
+	/*@GetMapping("/api/{q}{date}") 
+	public ResponseEntity<Noticia> obterRespostaApi(@PathVariable String q, @PathVariable String date){
+		Mono<Noticia> monoNoticia =  this.webClient
+				.method(HttpMethod.GET)
+				.uri(uriBuilder -> uriBuilder
+						.path("/api/")
+						.queryParam("q", q)
+						.queryParam("date", date)
+						.build())	
+				.retrieve()
+				.bodyToMono(Noticia.class);
+			
+			Noticia noticia = monoNoticia.block();
+			return ResponseEntity.ok(noticia);
+	}*/
+}

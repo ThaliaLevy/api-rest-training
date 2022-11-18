@@ -1,0 +1,12 @@
+CREATE TABLE tb_historico_parametros (
+id BIGINT NOT NULL,
+etiqueta varchar(255) NOT NULL,
+data varchar(255) NOT NULL);
+
+INSERT INTO tb_historico_parametros (etiqueta, data)
+VALUES
+   ('Teatro', '10/11/2022'),
+   ('Tecnologia', '10/11/2022'),
+   ('Tecnologia', '09/11/2022'),
+   ('Musica', '22/09/2022'),
+   ('Teatro', '13/10/2022');

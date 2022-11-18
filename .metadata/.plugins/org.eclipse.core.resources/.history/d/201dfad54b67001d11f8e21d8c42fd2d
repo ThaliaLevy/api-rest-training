@@ -1,0 +1,164 @@
+package gft.services;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import gft.entities.Etiqueta;
+import gft.entities.HistoricoParametros;
+import gft.entities.ListaNoticias;
+import gft.entities.Usuario;
+import gft.exception.EntityNotFoundException;
+import gft.repositories.EtiquetaRepository;
+import gft.repositories.HistoricoParametrosRepository;
+import reactor.core.publisher.Mono;
+
+@Service
+public class EtiquetaService {
+
+	private final EtiquetaRepository etiquetaRepository;
+	private final HistoricoParametrosRepository historicoParametrosRepository;
+	private final WebClient webClient;
+
+	public EtiquetaService(EtiquetaRepository etiquetaRepository, WebClient webClient,
+			HistoricoParametrosRepository historicoParametrosRepository) {
+		this.etiquetaRepository = etiquetaRepository;
+		this.historicoParametrosRepository = historicoParametrosRepository;
+		this.webClient = webClient;
+	}
+
+	public Etiqueta salvarEtiqueta(Etiqueta etiqueta) {
+		try {
+			Etiqueta etiquetaExistente = buscarEtiquetaPorNome(etiqueta.getNome());
+
+			if (verificarSeEtiquetaJaExisteParaUsuario(etiqueta.getNome(), etiqueta.getUsuarios()).isEmpty()) {
+				atualizarEtiqueta(etiqueta, etiquetaExistente.getId());
+				return etiqueta;
+			}
+		} catch (Exception e) {
+			etiquetaRepository.save(etiqueta);
+			return etiqueta;
+		}
+		return null;
+	}
+
+	public Collection<Etiqueta> verificarSeEtiquetaJaExisteParaUsuario(String nomeEtiqueta, List<Usuario> usuario) {
+		return etiquetaRepository.findByNomeAndUsuariosIn(nomeEtiqueta, usuario);
+	}
+
+	public Etiqueta atualizarEtiqueta(Etiqueta etiqueta, Long id) {
+		Etiqueta etiquetaOriginal = this.buscarEtiqueta(id);
+
+		List<Usuario> usuarios = new ArrayList<>();
+		usuarios.addAll(etiquetaOriginal.getUsuarios());
+		usuarios.addAll(etiqueta.getUsuarios());
+
+		etiqueta.setUsuarios(usuarios);
+		etiqueta.setId(etiquetaOriginal.getId());
+
+		return etiquetaRepository.save(etiqueta);
+	}
+
+	public Etiqueta buscarEtiquetaPorNome(String nome) {
+		Optional<Etiqueta> optional = Optional.of(etiquetaRepository.findByNome(nome));
+		return optional.orElseThrow(() -> new EntityNotFoundException("Etiqueta não encontrada!"));
+	}
+
+	public Etiqueta buscarEtiqueta(Long id) {
+		Optional<Etiqueta> optional = etiquetaRepository.findById(id);
+
+		return optional.orElseThrow(() -> new EntityNotFoundException("Etiqueta não encontrada!"));
+	}
+
+	public ListaNoticias webClient(Usuario usuario, String q, String date) {
+		List<Usuario> usuarios = new ArrayList<>();
+		usuarios.add(usuario);
+
+		Collection<Etiqueta> etiquetaExistente = verificarSeEtiquetaJaExisteParaUsuario(q, usuarios);
+
+		if (!etiquetaExistente.isEmpty()) {
+			Mono<ListaNoticias> monoNoticia = this.webClient.method(HttpMethod.GET)
+					.uri(uriBuilder -> uriBuilder.path("api/").queryParam("q", q).queryParam("date", date).build())
+					.retrieve().bodyToMono(ListaNoticias.class);
+
+			ListaNoticias noticia = monoNoticia.block();
+
+			historicoParametrosRepository.save(new HistoricoParametros(null, q.toLowerCase(), date));
+			return noticia;
+		}
+
+		return null;
+	}
+
+	public Collection<String> listarEtiquetasMaisAcessadas() {
+		List<HistoricoParametros> historicoCompletoDeParametros = historicoParametrosRepository.findAll();
+		List<String> etiquetas = new ArrayList<>();
+
+		for (HistoricoParametros parametros : historicoCompletoDeParametros) {
+			etiquetas.add(parametros.getEtiqueta());
+		}
+
+	private static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est."
+			+ "Vivamus fermentum semper porta. Nunc diam velit, adipiscing ut tristique vitae, sagittis vel odio. Maecenas convallis ullamcorper ultricies. Curabitur ornare, ligula semper consectetur sagittis, nisi diam iaculis velit, id fringilla sem nunc vel mi. Nam dictum, odio nec pretium volutpat, arcu ante placerat erat, non tristique elit urna et turpis. Quisque mi metus, ornare sit amet fermentum et, tincidunt et orci. Fusce eget orci a orci congue vestibulum. Ut dolor diam, elementum et vestibulum eu, porttitor vel elit. Curabitur venenatis pulvinar tellus gravida ornare. Sed et erat faucibus nunc euismod ultricies ut id justo. Nullam cursus suscipit nisi, et ultrices justo sodales nec. Fusce venenatis facilisis lectus ac semper. Aliquam at massa ipsum. Quisque bibendum purus convallis nulla ultrices ultricies. Nullam aliquam, mi eu aliquam tincidunt, purus velit laoreet tortor, viverra pretium nisi quam vitae mi. Fusce vel volutpat elit. Nam sagittis nisi dui."
+			+ "Suspendisse lectus leo, consectetur in tempor sit amet, placerat quis neque. Etiam luctus porttitor lorem, sed suscipit est rutrum non. Curabitur lobortis nisl a enim congue semper. Aenean commodo ultrices imperdiet. Vestibulum ut justo vel sapien venenatis tincidunt. Phasellus eget dolor sit amet ipsum dapibus condimentum vitae quis lectus. Aliquam ut massa in turpis dapibus convallis. Praesent elit lacus, vestibulum at malesuada et, ornare et est. Ut augue nunc, sodales ut euismod non, adipiscing vitae orci. Mauris ut placerat justo. Mauris in ultricies enim. Quisque nec est eleifend nulla ultrices egestas quis ut quam. Donec sollicitudin lectus a mauris pulvinar id aliquam urna cursus. Cras quis ligula sem, vel elementum mi. Phasellus non ullamcorper urna."
+					.replaceAll("[.,]", "");
+
+	public static void main(String[] args) {
+		Map<String, Integer> mapaFreq = new HashMap<>();
+		// Cria o mapa de Frequências
+		for (String palavra : LOREM_IPSUM.split("\\s+")) {
+			if (!mapaFreq.containsKey(palavra)) {
+				mapaFreq.put(palavra, 1);
+			} else {
+				mapaFreq.put(palavra, 1 + mapaFreq.get(palavra));
+			}
+		}
+		// Arrays para armazenar os 3 valores mais frequentes.
+		String[] palavrasMaisFrequentes = new String[3];
+		int[] freqPalavras = new int[3];
+		// Percorre todos os valores do mapa
+		for (Map.Entry<String, Integer> entrada : mapaFreq.entrySet()) {
+			// Se achar algo mais frequente que a primeira posição
+			if (entrada.getValue() >= freqPalavras[0]) {
+				freqPalavras[0] = entrada.getValue();
+				palavrasMaisFrequentes[0] = entrada.getKey();
+
+			} else {
+				if (entrada.getValue() >= freqPalavras[1]) {
+					freqPalavras[1] = entrada.getValue();
+					palavrasMaisFrequentes[1] = entrada.getKey();
+				} else if (entrada.getValue() >= freqPalavras[2]) {
+					freqPalavras[2] = entrada.getValue();
+					palavrasMaisFrequentes[2] = entrada.getKey();
+				}
+			}
+//	          System.out.println(entrada.getKey() + "/" + entrada.getValue()); imprime todo o mapa
+		}
+		for (int i = 0; i < freqPalavras.length; i++) {
+			System.out.println(i + 1 + " palavra: " + palavrasMaisFrequentes[i] + " \nFrequência: " + freqPalavras[i]
+					+ "\n------------------------\n");
+		}
+
+		/*
+		 * Set<String> ocorrenciasDasEtiquetas = new HashSet<String>(etiquetas);
+		 * List<Integer> contadorDeOcorrenciaDeEtiquetas = new ArrayList<>();
+		 * List<String> etiquetasEmOrdem = new ArrayList<>();
+		 * 
+		 * for (String ocorrencia : ocorrenciasDasEtiquetas) {
+		 * contadorDeOcorrenciaDeEtiquetas.add(Collections.frequency(etiquetas,
+		 * ocorrencia)); }
+		 * 
+		 * //for (Integer etiqueta : contadorDeOcorrenciaDeEtiquetas) {
+		 * Collections.sort(contadorDeOcorrenciaDeEtiquetas); //}
+		 */
+
+		return null;
+	}
+}

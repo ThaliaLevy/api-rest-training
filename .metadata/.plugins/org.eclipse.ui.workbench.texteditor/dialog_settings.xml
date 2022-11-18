@@ -6,8 +6,10 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="etiqueta"/>
+		<item key="selection" value="findByNomeAndUsuariosIn"/>
 		<list key="findhistory">
+			<item value="findByNomeAndUsuariosIn"/>
+			<item value="nomeEtiqueta"/>
 			<item value="etiquetas"/>
 			<item value="etiqueta"/>
 			<item value="EtiquetaId"/>
@@ -21,8 +23,6 @@
 			<item value="(cliente)"/>
 			<item value="clienteRepository"/>
 			<item value="y(cliente)"/>
-			<item value="Etiqueta cliente"/>
-			<item value="clienteService"/>
 		</list>
 		<list key="replacehistory">
 			<item value="etiqueta"/>
