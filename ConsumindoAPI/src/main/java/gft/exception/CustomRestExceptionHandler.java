@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import gft.dto.ApiErrorDTO;
 
-@ControllerAdvice		//classe que será chamada sempre que houver alguma exceção
+@ControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler({LojaException.class})

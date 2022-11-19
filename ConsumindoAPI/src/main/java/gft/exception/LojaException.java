@@ -1,6 +1,5 @@
 package gft.exception;
 
-//classe que exibirá exceção personalizada 
 public class LojaException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
