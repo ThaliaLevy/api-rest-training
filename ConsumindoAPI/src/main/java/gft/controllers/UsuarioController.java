@@ -55,22 +55,20 @@ public class UsuarioController {
 
 	@SuppressWarnings("rawtypes")
 	@PostMapping("/etiquetas/vincular")
-	public ResponseEntity salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) {
+	public ResponseEntity salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) throws Exception {
 		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		if (usuarioAutenticado.getPerfil().getNome().equals("Usuario")) {
 			Etiqueta etiqueta = etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(usuarioAutenticado, dto));
 
 			if (etiqueta == null) {
-				return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-						.body("Etiqueta já está vinculada ao usuário!");
+				return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta já está vinculada ao usuário!");
 			} else {
 				return ResponseEntity.status(HttpStatus.CREATED).body("Etiqueta vinculada ao usuário com sucesso!");
 			}
 		}
 
-		return ResponseEntity.status(HttpStatus.FORBIDDEN)
-				.body("Cadastro de etiquetas só pode ser realizado por perfil sem administrador.");
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Cadastro de etiquetas só pode ser realizado por perfil sem administrador.");
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -78,26 +76,17 @@ public class UsuarioController {
 	public ResponseEntity obterRespostaApiNoticiasAntigas(@RequestParam String q, @RequestParam String date) {
 		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		ListaNoticias noticias = etiquetaService.webClient(usuarioAutenticado, q, date);
-
-		if (noticias == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Etiqueta não está cadastrada para o usuário.");
-		} else {
-			return ResponseEntity.ok(noticias);
-		}
+		
+		return ResponseEntity.ok(noticias);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@GetMapping("/noticias/hoje")
 	public ResponseEntity obterRespostaApiNoticiasHoje(@RequestParam String q) throws ParseException {
 		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
 		ListaNoticias noticias = etiquetaService.webClient(usuarioAutenticado, q, verificarDataDeHoje());
 
-		if (noticias == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Etiqueta não está cadastrada para o usuário.");
-		} else {
-			return ResponseEntity.ok(noticias);
-		}
+		return ResponseEntity.ok(noticias);
 	}
 
 	private String verificarDataDeHoje() {

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,7 +18,6 @@ import gft.entities.Etiqueta;
 import gft.entities.HistoricoParametros;
 import gft.entities.ListaNoticias;
 import gft.entities.Usuario;
-import gft.exception.EntityNotFoundException;
 import gft.repositories.EtiquetaRepository;
 import gft.repositories.HistoricoParametrosRepository;
 import reactor.core.publisher.Mono;
@@ -28,26 +29,29 @@ public class EtiquetaService {
 	private final HistoricoParametrosRepository historicoParametrosRepository;
 	private final WebClient webClient;
 
-	public EtiquetaService(EtiquetaRepository etiquetaRepository, WebClient webClient,
-			HistoricoParametrosRepository historicoParametrosRepository) {
+	public EtiquetaService(EtiquetaRepository etiquetaRepository, WebClient webClient, HistoricoParametrosRepository historicoParametrosRepository) {
 		this.etiquetaRepository = etiquetaRepository;
 		this.historicoParametrosRepository = historicoParametrosRepository;
 		this.webClient = webClient;
 	}
-
-	public Etiqueta salvarEtiqueta(Etiqueta etiqueta) {
+//AINDA PRECISA TESTAR
+	
+	//TODAS AS EXCEPTIONS PRECISAM SER REVISADAS *** NA CLASSE CONTROLLER PRECISO TIRAR OS IFS 
+	// DEIXAR CLASSES EXCEPTION: CUSTOMIZED.. ENTITYNOTFOUND
+	public Etiqueta salvarEtiqueta(Etiqueta etiqueta) throws Exception {
 		try {
 			Etiqueta etiquetaExistente = buscarEtiquetaPorNome(etiqueta.getNome());
 
 			if (verificarSeEtiquetaJaExisteParaUsuario(etiqueta.getNome(), etiqueta.getUsuarios()).isEmpty()) {
 				atualizarEtiqueta(etiqueta, etiquetaExistente.getId());
 				return etiqueta;
-			}
+			} 
+			
+			throw new EntityNotFoundException("Etiqueta não está cadastrada para o usuário.");
 		} catch (Exception e) {
 			etiquetaRepository.save(etiqueta);
 			return etiqueta;
 		}
-		return null;
 	}
 
 	public Collection<Etiqueta> verificarSeEtiquetaJaExisteParaUsuario(String nomeEtiqueta, List<Usuario> usuario) {
@@ -68,8 +72,7 @@ public class EtiquetaService {
 	}
 
 	public Etiqueta buscarEtiquetaPorNome(String nome) {
-		Optional<Etiqueta> optional = Optional.of(etiquetaRepository.findByNome(nome));
-		return optional.orElseThrow(() -> new EntityNotFoundException("Etiqueta não encontrada!"));
+		return etiquetaRepository.findByNome(nome);	 
 	}
 
 	public Etiqueta buscarEtiqueta(Long id) {
@@ -86,16 +89,21 @@ public class EtiquetaService {
 
 		if (!etiquetaExistente.isEmpty()) {
 			Mono<ListaNoticias> monoNoticia = this.webClient.method(HttpMethod.GET)
-					.uri(uriBuilder -> uriBuilder.path("api/").queryParam("q", q).queryParam("date", date).build())
-					.retrieve().bodyToMono(ListaNoticias.class);
+												  .uri(uriBuilder -> uriBuilder
+														  .path("api/")
+														  .queryParam("q", q)
+														  .queryParam("date", date)
+														  .build())
+												  .retrieve()
+												  .bodyToMono(ListaNoticias.class);
 
 			ListaNoticias noticia = monoNoticia.block();
 
 			historicoParametrosRepository.save(new HistoricoParametros(null, q.toLowerCase(), date, usuario.getId()));
 			return noticia;
 		}
-
-		return null;
+//testar
+		throw new EntityNotFoundException("teste!");
 	}
 
 	public List<String> listarEtiquetasMaisAcessadas() {

@@ -1,21 +1,19 @@
-package gft.dto;
+package gft.exception;
 
 import java.util.Date;
 
-import org.springframework.http.HttpStatus;
-
-public class ApiErrorDTO {
-
+public class ExceptionResponse {
+	
 	private Date timestamp;
 	private String message;
-	private HttpStatus status;
-
-	public ApiErrorDTO() {}
-
-	public ApiErrorDTO(Date timestamp, String message, HttpStatus status) {
+	private String details;
+	
+	public ExceptionResponse() {}
+	
+	public ExceptionResponse(Date timestamp, String message, String details) {
 		this.timestamp = timestamp;
 		this.message = message;
-		this.status = status;
+		this.details = details;
 	}
 
 	public Date getTimestamp() {
@@ -34,11 +32,11 @@ public class ApiErrorDTO {
 		this.message = message;
 	}
 
-	public HttpStatus getStatus() {
-		return status;
+	public String getDetails() {
+		return details;
 	}
 
-	public void setStatus(HttpStatus status) {
-		this.status = status;
+	public void setDetails(String details) {
+		this.details = details;
 	}
 }
