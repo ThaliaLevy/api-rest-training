@@ -24,6 +24,7 @@ import gft.entities.Etiqueta;
 import gft.entities.HistoricoParametros;
 import gft.entities.ListaNoticias;
 import gft.entities.Usuario;
+import gft.exception.BadRequestException;
 import gft.services.EtiquetaService;
 import gft.services.UsuarioService;
 
@@ -48,9 +49,8 @@ public class UsuarioController {
 			Usuario usuario = usuarioService.salvarUsuario(UsuarioMapper.fromDTO(dto));
 			return ResponseEntity.ok(UsuarioMapper.fromEntity(usuario));
 		}
-
-		return ResponseEntity.status(HttpStatus.FORBIDDEN)
-				.body("Cadastro de usuários só pode ser realizado por perfil administrador.");
+		
+		throw new BadRequestException("teste >Cadastro de usuários só pode ser realizado por perfil administrador.");
 	}
 
 	@SuppressWarnings("rawtypes")
