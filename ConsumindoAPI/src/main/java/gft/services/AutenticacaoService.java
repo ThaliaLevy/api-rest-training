@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -13,9 +14,10 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 
-import gft.dto.AutenticacaoDTO;
-import gft.dto.TokenDTO;
+import gft.dto.autenticacao.AutenticacaoDTO;
+import gft.dto.autenticacao.TokenDTO;
 import gft.entities.Usuario;
+import gft.exception.ForbiddenException;
 
 @Service
 public class AutenticacaoService {
@@ -35,12 +37,15 @@ public class AutenticacaoService {
 	}
 
 	public TokenDTO autenticar(AutenticacaoDTO authForm) throws AuthenticationException {
-		Authentication authentication = authManager
-				.authenticate(new UsernamePasswordAuthenticationToken(authForm.getEmail(), authForm.getSenha()));
+		try {
+			Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(authForm.getEmail(), authForm.getSenha()));
+			String token = gerarToken(authentication);
 
-		String token = gerarToken(authentication);
-
-		return new TokenDTO(token);
+			return new TokenDTO(token);
+		} catch (BadCredentialsException e) {
+			throw new ForbiddenException("Autenticação não realizada. Por favor, revise o email e a senha informados.");
+		}
+		
 	}
 
 	private Algorithm criarAlgoritmo() {
@@ -52,11 +57,16 @@ public class AutenticacaoService {
 
 		Date dataDeHoje = new Date();
 		Date dataDeExpiracao = new Date(dataDeHoje.getTime() + Long.parseLong(expiration));
-		return JWT.create().withIssuer(issuer).withExpiresAt(dataDeExpiracao).withSubject(principal.getId().toString())
-				.sign(this.criarAlgoritmo());
+		return JWT.create()
+				  .withIssuer(issuer)
+				  .withExpiresAt(dataDeExpiracao)
+				  .withSubject(
+						  principal.getId()
+						  .toString())
+				  .sign(this.criarAlgoritmo());
 	}
 
-	public boolean verificaToken(String token) {
+	public boolean verificarToken(String token) {
 		try {
 			if (token == null) {
 				return false;

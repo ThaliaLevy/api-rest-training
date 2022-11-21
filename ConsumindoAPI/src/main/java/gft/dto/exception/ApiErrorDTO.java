@@ -1,4 +1,4 @@
-package gft.dto;
+package gft.dto.exception;
 
 import java.util.Date;
 

@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import gft.dto.ApiErrorDTO;
+import gft.dto.exception.ApiErrorDTO;
+import gft.exception.AlreadyReportedException;
 import gft.exception.BadRequestException;
 import gft.exception.ForbiddenException;
 import gft.exception.NotFoundException;
@@ -21,7 +22,7 @@ import gft.exception.NotFoundException;
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler({NotFoundException.class})
-	public ResponseEntity<ApiErrorDTO> handleEntityNotFoundException(NotFoundException ex, WebRequest request){
+	public ResponseEntity<ApiErrorDTO> notFoundException(NotFoundException ex, WebRequest request){
 		
 		ApiErrorDTO apiError = new ApiErrorDTO(new Date(), ex.getMessage(), HttpStatus.NOT_FOUND);
 		
@@ -29,7 +30,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 	}
 	
 	@ExceptionHandler({ForbiddenException.class})
-	public ResponseEntity<ApiErrorDTO> handleEntityNotFoundException(ForbiddenException ex, WebRequest request){
+	public ResponseEntity<ApiErrorDTO> forbiddenException(ForbiddenException ex, WebRequest request){
 		
 		ApiErrorDTO apiError = new ApiErrorDTO(new Date(), ex.getMessage(), HttpStatus.FORBIDDEN);
 		
@@ -37,10 +38,19 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 	}
 	
 	@ExceptionHandler({BadRequestException.class})
-	public ResponseEntity<ApiErrorDTO> handleEntityNotFoundException(BadRequestException ex, WebRequest request){
+	public ResponseEntity<ApiErrorDTO> badRequestException(BadRequestException ex, WebRequest request){
 		
 		ApiErrorDTO apiError = new ApiErrorDTO(new Date(), ex.getMessage(), HttpStatus.BAD_REQUEST);
 		
 		return new ResponseEntity<ApiErrorDTO>(apiError, new HttpHeaders(), apiError.getStatus());
 	}
+	
+	@ExceptionHandler({AlreadyReportedException.class})
+	public ResponseEntity<ApiErrorDTO> alreadyReportedException(AlreadyReportedException ex, WebRequest request){
+		
+		ApiErrorDTO apiError = new ApiErrorDTO(new Date(), ex.getMessage(), HttpStatus.ALREADY_REPORTED);
+		
+		return new ResponseEntity<ApiErrorDTO>(apiError, new HttpHeaders(), apiError.getStatus());
+	}
+
 }

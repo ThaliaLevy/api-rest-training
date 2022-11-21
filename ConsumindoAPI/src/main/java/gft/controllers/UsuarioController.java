@@ -24,7 +24,7 @@ import gft.entities.Etiqueta;
 import gft.entities.HistoricoParametros;
 import gft.entities.ListaNoticias;
 import gft.entities.Usuario;
-import gft.exception.BadRequestException;
+import gft.exception.ForbiddenException;
 import gft.services.EtiquetaService;
 import gft.services.UsuarioService;
 
@@ -46,11 +46,11 @@ public class UsuarioController {
 		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
-			Usuario usuario = usuarioService.salvarUsuario(UsuarioMapper.fromDTO(dto));
-			return ResponseEntity.ok(UsuarioMapper.fromEntity(usuario));
-		}
+				Usuario usuario = usuarioService.salvarUsuario(UsuarioMapper.fromDTO(dto));
+				return ResponseEntity.ok(UsuarioMapper.fromEntity(usuario));
+		}	
 		
-		throw new BadRequestException("teste >Cadastro de usuários só pode ser realizado por perfil administrador.");
+		throw new ForbiddenException("Cadastro de usuários só pode ser realizado por perfil administrador.");
 	}
 
 	@SuppressWarnings("rawtypes")

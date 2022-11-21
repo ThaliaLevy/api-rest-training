@@ -1,4 +1,4 @@
-package gft.dto;
+package gft.dto.autenticacao;
 
 public class TokenDTO {
 

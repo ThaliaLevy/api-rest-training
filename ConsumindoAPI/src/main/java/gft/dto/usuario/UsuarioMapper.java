@@ -1,7 +1,5 @@
 package gft.dto.usuario;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import gft.entities.Perfil;
 import gft.entities.Usuario;
 
@@ -11,7 +9,7 @@ public class UsuarioMapper {
 		Perfil perfil = new Perfil();
 		perfil.setId(dto.getPerfilId());			
 		
-		return new Usuario(null, dto.getNome(), dto.getEmail(), new BCryptPasswordEncoder().encode(dto.getSenha()), perfil);
+		return new Usuario(null, dto.getNome(), dto.getEmail(), dto.getSenha(), perfil);
 	}
 	
 	public static ConsultaUsuarioDTO fromEntity(Usuario usuario) {

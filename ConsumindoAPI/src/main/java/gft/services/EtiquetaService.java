@@ -34,7 +34,6 @@ public class EtiquetaService {
 		this.historicoParametrosRepository = historicoParametrosRepository;
 		this.webClient = webClient;
 	}
-//AINDA PRECISA TESTAR
 	
 	//TODAS AS EXCEPTIONS PRECISAM SER REVISADAS *** NA CLASSE CONTROLLER PRECISO TIRAR OS IFS 
 	// DEIXAR CLASSES EXCEPTION: CUSTOMIZED.. ENTITYNOTFOUND

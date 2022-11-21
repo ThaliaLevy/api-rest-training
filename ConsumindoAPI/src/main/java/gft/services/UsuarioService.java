@@ -6,9 +6,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import gft.entities.Usuario;
+import gft.exception.AlreadyReportedException;
 import gft.exception.BadRequestException;
 import gft.repositories.UsuarioRepository;
 
@@ -23,42 +25,36 @@ public class UsuarioService implements UserDetailsService {
 
 	public Usuario salvarUsuario(Usuario usuario) {		
 		try {
-			return usuarioRepository.save(usuario);
+			usuario.setSenha(new BCryptPasswordEncoder().encode(usuario.getSenha()));
+			
+			if(buscarUsuarioPorEmail(usuario.getEmail()) == null) {
+				return usuarioRepository.save(usuario);
+			}
+			
+			throw new AlreadyReportedException("E-mail não está disponível. Insira um diferente.");
 		} catch (DataIntegrityViolationException e) {
-			String campoQueCausouException = e.getMostSpecificCause() + "";
-			throw new BadRequestException(campoQueCausouException.substring(
-										  campoQueCausouException.indexOf("'") +1, 
-										  campoQueCausouException.lastIndexOf("'")) + " deve ser informado!");
+			String campoQueCausouException = tratarCampoQueCausouException(e.getMostSpecificCause() + "");
+						
+			throw new BadRequestException(campoQueCausouException + " deve ser informado!");
 		} catch (IllegalArgumentException e) {
-			//acho que precisa do tratamento na outra classe > de autenticação
 			throw new BadRequestException("senha deve ser informada!");
 		}
-		
-	/*	if(usuario.getNome().isEmpty()) {
-			throw new BadRequestException(usuario.getNome() + " é um campo obrigatório.");
-		} else if(usuario.getEmail().isEmpty()) {
-			throw new BadRequestException(usuario.getNome() + " é um campo obrigatório.");
-		} else if(usuario.getSenha().isEmpty()) {
-			
-		} else if(usuario.getPerfil().getNome() == null) {
-			
-		}
-		
-		*/
+	}
+	
+	public String tratarCampoQueCausouException(String campoQueCausouException) {		
+		return campoQueCausouException = campoQueCausouException.replace("_i", "I")
+							   		   						    .substring(campoQueCausouException.indexOf("'") +1, 
+							   		   								   	   campoQueCausouException.lastIndexOf("'"));
 	}
 
 	public Usuario buscarUsuarioPorEmail(String email) {
 		Optional<Usuario> optional = usuarioRepository.findByEmail(email);
-
-		if (optional.isEmpty()) {
-			throw new UsernameNotFoundException("Usuário não encontrado!");
+		
+		if(optional.isEmpty()) {
+			return null;
 		}
-		return optional.get();
-	}
-
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return buscarUsuarioPorEmail(username);
+		
+		return optional.get();		
 	}
 
 	public Usuario buscarUsuarioPorId(Long idUsuario) {
@@ -67,6 +63,18 @@ public class UsuarioService implements UserDetailsService {
 		if (optional.isEmpty()) {
 			throw new RuntimeException("Usuário não encontrado!");
 		}
+		
 		return optional.get();
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		UserDetails userDetails = buscarUsuarioPorEmail(username);
+		
+		if(buscarUsuarioPorEmail(username) == null) {
+			throw new UsernameNotFoundException("Usuário não encontrado!");
+		}
+		
+		return userDetails;
 	}
 }
