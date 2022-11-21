@@ -18,6 +18,7 @@ import gft.entities.Etiqueta;
 import gft.entities.HistoricoParametros;
 import gft.entities.ListaNoticias;
 import gft.entities.Usuario;
+import gft.exception.AlreadyReportedException;
 import gft.repositories.EtiquetaRepository;
 import gft.repositories.HistoricoParametrosRepository;
 import reactor.core.publisher.Mono;
@@ -35,21 +36,19 @@ public class EtiquetaService {
 		this.webClient = webClient;
 	}
 	
-	//TODAS AS EXCEPTIONS PRECISAM SER REVISADAS *** NA CLASSE CONTROLLER PRECISO TIRAR OS IFS 
-	// DEIXAR CLASSES EXCEPTION: CUSTOMIZED.. ENTITYNOTFOUND
 	public Etiqueta salvarEtiqueta(Etiqueta etiqueta) throws Exception {
-		try {
-			Etiqueta etiquetaExistente = buscarEtiquetaPorNome(etiqueta.getNome());
+		Etiqueta etiquetaExistente = buscarEtiquetaPorNome(etiqueta.getNome());
 
+		if(etiquetaExistente == null) {
+			etiquetaRepository.save(etiqueta);
+			return etiqueta;
+		} else {
 			if (verificarSeEtiquetaJaExisteParaUsuario(etiqueta.getNome(), etiqueta.getUsuarios()).isEmpty()) {
 				atualizarEtiqueta(etiqueta, etiquetaExistente.getId());
 				return etiqueta;
-			} 
-			
-			throw new EntityNotFoundException("Etiqueta não está cadastrada para o usuário.");
-		} catch (Exception e) {
-			etiquetaRepository.save(etiqueta);
-			return etiqueta;
+			} else {
+				throw new AlreadyReportedException("Etiqueta já é vinculada ao usuário.");
+			}
 		}
 	}
 
@@ -71,7 +70,13 @@ public class EtiquetaService {
 	}
 
 	public Etiqueta buscarEtiquetaPorNome(String nome) {
-		return etiquetaRepository.findByNome(nome);	 
+		try {
+			Etiqueta optional = etiquetaRepository.findByNome(nome);
+		
+			return optional;
+		} catch (NullPointerException e) {
+			return null;
+		}
 	}
 
 	public Etiqueta buscarEtiqueta(Long id) {

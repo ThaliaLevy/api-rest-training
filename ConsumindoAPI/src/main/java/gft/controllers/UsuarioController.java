@@ -20,7 +20,6 @@ import gft.dto.etiqueta.EtiquetaMapper;
 import gft.dto.etiqueta.RegistroEtiquetaDTO;
 import gft.dto.usuario.RegistroUsuarioDTO;
 import gft.dto.usuario.UsuarioMapper;
-import gft.entities.Etiqueta;
 import gft.entities.HistoricoParametros;
 import gft.entities.ListaNoticias;
 import gft.entities.Usuario;
@@ -59,13 +58,9 @@ public class UsuarioController {
 		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		if (usuarioAutenticado.getPerfil().getNome().equals("Usuario")) {
-			Etiqueta etiqueta = etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(usuarioAutenticado, dto));
-
-			if (etiqueta == null) {
-				return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("Etiqueta já está vinculada ao usuário!");
-			} else {
-				return ResponseEntity.status(HttpStatus.CREATED).body("Etiqueta vinculada ao usuário com sucesso!");
-			}
+			etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(usuarioAutenticado, dto));
+			
+			return ResponseEntity.status(HttpStatus.OK).body("Etiqueta vinculada ao usuário com sucesso!");
 		}
 
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Cadastro de etiquetas só pode ser realizado por perfil sem administrador.");
