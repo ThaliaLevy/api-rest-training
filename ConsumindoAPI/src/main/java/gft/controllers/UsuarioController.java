@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -94,7 +96,7 @@ public class UsuarioController {
 
 	@SuppressWarnings("rawtypes")
 	@GetMapping("/etiquetas-mais-acessadas")
-	public ResponseEntity visualizarEtiquetasMaisAcessadas() {
+	public ResponseEntity visualizarEtiquetasMaisAcessadas(@PageableDefault(sort = "asc") Pageable pageable) {
 		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
@@ -110,9 +112,6 @@ public class UsuarioController {
 
 		List<HistoricoParametros> ocorrenciasDoIdDoUsuario = etiquetaService.visualizarParametrosAcessadosHoje(usuarioAutenticado, verificarDataDeHoje());
 		
-		if(ocorrenciasDoIdDoUsuario != null) {
-			return ocorrenciasDoIdDoUsuario;
-		}
-		return null;
+		return ocorrenciasDoIdDoUsuario;
 	}
 }

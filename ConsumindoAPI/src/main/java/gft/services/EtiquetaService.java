@@ -14,11 +14,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import gft.dto.etiqueta.RegistroOcorrenciasEtiquetaDTO;
 import gft.entities.Etiqueta;
 import gft.entities.HistoricoParametros;
 import gft.entities.ListaNoticias;
 import gft.entities.Usuario;
 import gft.exception.AlreadyReportedException;
+import gft.exception.NotFoundException;
 import gft.repositories.EtiquetaRepository;
 import gft.repositories.HistoricoParametrosRepository;
 import reactor.core.publisher.Mono;
@@ -106,36 +108,50 @@ public class EtiquetaService {
 			historicoParametrosRepository.save(new HistoricoParametros(null, q.toLowerCase(), date, usuario.getId()));
 			return noticia;
 		}
-//testar
-		throw new EntityNotFoundException("teste!");
+		
+		throw new NotFoundException("Etiqueta não encontrada no cadastro de etiquetas vinculadas ao usuário.");
 	}
-
-	public List<String> listarEtiquetasMaisAcessadas() {
+	
+	public List<RegistroOcorrenciasEtiquetaDTO> listarEtiquetasMaisAcessadas() {
 		List<HistoricoParametros> historicoCompletoDeParametros = historicoParametrosRepository.findAll();
-		List<String> etiquetas = new ArrayList<>();
 
-		for (HistoricoParametros parametros : historicoCompletoDeParametros) {
-			etiquetas.add(parametros.getEtiqueta());
+		if(!historicoCompletoDeParametros.isEmpty()) {
+			List<String> etiquetas = new ArrayList<>();
+
+			for (HistoricoParametros parametros : historicoCompletoDeParametros) {
+				etiquetas.add(parametros.getEtiqueta());
+			}
+
+			List<RegistroOcorrenciasEtiquetaDTO> registrosOrdenados = new ArrayList<>();
+			Set<String> todasAsEtiquetas = new HashSet<String>(etiquetas);
+			
+			for (String nomeEtiqueta : todasAsEtiquetas)
+				registrosOrdenados.add(new RegistroOcorrenciasEtiquetaDTO(nomeEtiqueta, Collections.frequency(etiquetas, nomeEtiqueta)));		
+			
+			Collections.sort(registrosOrdenados);
+			Collections.reverse(registrosOrdenados);
+			
+			return registrosOrdenados;
 		}
-
-		List<String> etiquetasOrdenadasPorOcorrencia = new ArrayList<>();
-		Set<String> st = new HashSet<String>(etiquetas);
-		for (String s : st)
-			etiquetasOrdenadasPorOcorrencia.add(Collections.frequency(etiquetas, s) + " etiqueta(s): " + s);
-
-		Collections.sort(etiquetasOrdenadasPorOcorrencia, Collections.reverseOrder());
-
-		return etiquetasOrdenadasPorOcorrencia;
+		
+		throw new NotFoundException("Não há histórico de etiquetas acessadas.");
 	}
 
 	public List<HistoricoParametros> visualizarParametrosAcessadosHoje(Usuario usuarioAutenticado, String data) {
 		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
-			return historicoParametrosRepository.findByData(data);
+			List<HistoricoParametros> historicoParametrosAcessadosTodosUsuarios = historicoParametrosRepository.findByData(data);
+			
+			if(historicoParametrosAcessadosTodosUsuarios.isEmpty()) {
+				throw new NotFoundException("Não há histórico de parâmetros acessados hoje.");
+			}
+			
+			return historicoParametrosAcessadosTodosUsuarios;
 		} else {
 			List<HistoricoParametros> ocorrenciasDoIdDoUsuario = historicoParametrosRepository.findByIdUsuarioAndData(usuarioAutenticado.getId(), data);
 			if (ocorrenciasDoIdDoUsuario.isEmpty()) {
-				return null;
+				throw new NotFoundException("Não há histórico de parâmetros acessados hoje.");
 			}
+			
 			return ocorrenciasDoIdDoUsuario;
 		}
 	}

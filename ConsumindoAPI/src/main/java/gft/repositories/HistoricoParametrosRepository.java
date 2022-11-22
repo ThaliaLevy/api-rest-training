@@ -11,4 +11,5 @@ import gft.entities.HistoricoParametros;
 public interface HistoricoParametrosRepository extends JpaRepository<HistoricoParametros, Long> {
 	List<HistoricoParametros> findByData(String data);
 	List<HistoricoParametros> findByIdUsuarioAndData(Long idUsuario, String data);
+	//public List<HistoricoParametros> findTop10ByOrderByQuantidadeDesc();
 }
