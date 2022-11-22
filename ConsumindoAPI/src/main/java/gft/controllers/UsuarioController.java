@@ -78,18 +78,28 @@ public class UsuarioController {
 	@GetMapping("/noticias/antigas")
 	public ResponseEntity obterRespostaApiNoticiasAntigas(@RequestParam String q, @RequestParam String date) {
 		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		ListaNoticias noticias = etiquetaService.webClient(usuarioAutenticado, q, date);
 		
-		return ResponseEntity.ok(noticias);
+		if (usuarioAutenticado.getPerfil().getNome().equals("Usuario")) {
+			ListaNoticias noticias = etiquetaService.webClient(usuarioAutenticado, q, date);
+			
+			return ResponseEntity.ok(noticias);
+		}
+		
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Consulta de notícias só pode ser realizada por perfil sem administrador.");
 	}
 
 	@SuppressWarnings("rawtypes")
 	@GetMapping("/noticias/hoje")
 	public ResponseEntity obterRespostaApiNoticiasHoje(@RequestParam String q) throws ParseException {
 		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		ListaNoticias noticias = etiquetaService.webClient(usuarioAutenticado, q, verificarDataDeHoje());
+		
+		if (usuarioAutenticado.getPerfil().getNome().equals("Usuario")) {
+			ListaNoticias noticias = etiquetaService.webClient(usuarioAutenticado, q, verificarDataDeHoje());
 
-		return ResponseEntity.ok(noticias);
+			return ResponseEntity.ok(noticias);
+		}
+		
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Consulta de notícias só pode ser realizada por perfil sem administrador.");
 	}
 
 	private String verificarDataDeHoje() {
