@@ -47,8 +47,9 @@ public class UsuarioController {
 		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
-				Usuario usuario = usuarioService.salvarUsuario(UsuarioMapper.fromDTO(dto));
-				return ResponseEntity.ok(UsuarioMapper.fromEntity(usuario));
+				usuarioService.salvarUsuario(UsuarioMapper.fromDTO(dto));
+				
+				return  ResponseEntity.status(HttpStatus.OK).body("Usuário cadastrado com sucesso!");
 		}	
 		
 		throw new ForbiddenException("Cadastro de usuários só pode ser realizado por perfil administrador.");

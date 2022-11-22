@@ -2,10 +2,13 @@ package gft.dto.etiqueta;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import gft.entities.Usuario;
 
 public class RegistroEtiquetaDTO {
 
+	@JsonIgnore
 	private List<Usuario> usuarios;
 	private String etiqueta;
 	

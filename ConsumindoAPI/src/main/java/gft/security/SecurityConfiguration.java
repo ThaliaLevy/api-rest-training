@@ -21,7 +21,7 @@ import gft.services.UsuarioService;
 
 @EnableWebSecurity
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)	//habilita a anotação @PreAuthorize nos controllers
+@EnableGlobalMethodSecurity(prePostEnabled = true)	
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	private final UsuarioService usuarioService;

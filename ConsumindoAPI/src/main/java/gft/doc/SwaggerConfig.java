@@ -19,20 +19,20 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfig {
     private Contact contato() {
         return new Contact(
-                "Seu nome",
-                "http://www.seusite.com.br",
-                "voce@seusite.com.br");
+                "Thalia",
+                "http://www.gft.com",
+                "taly@gft.com");
     }
     private ApiInfoBuilder informacoesApi() {
 
         ApiInfoBuilder apiInfoBuilder = new ApiInfoBuilder();
 
-        apiInfoBuilder.title("Title - Rest API");
+        apiInfoBuilder.title("Desafio GFT - Rest API");
         apiInfoBuilder.description("API exemplo de uso de Springboot REST API");
         apiInfoBuilder.version("1.0");
         apiInfoBuilder.termsOfServiceUrl("Termo de uso: Open Source");
-        apiInfoBuilder.license("Licença - Sua Empresa");
-        apiInfoBuilder.licenseUrl("http://www.seusite.com.br");
+        apiInfoBuilder.license("Licença - GFT");
+        apiInfoBuilder.licenseUrl("http://www.gft.com");
         apiInfoBuilder.contact(this.contato());
 
         return apiInfoBuilder;

@@ -5,8 +5,7 @@ public class RegistroOcorrenciasEtiquetaDTO implements Comparable<RegistroOcorre
 	private String nomeEtiqueta;
 	private Integer quantidadeOcorrencias;
 
-	public RegistroOcorrenciasEtiquetaDTO() {
-	}
+	public RegistroOcorrenciasEtiquetaDTO() {}
 
 	public RegistroOcorrenciasEtiquetaDTO(String nomeEtiqueta, Integer quantidadeOcorrencias) {
 		this.nomeEtiqueta = nomeEtiqueta;
