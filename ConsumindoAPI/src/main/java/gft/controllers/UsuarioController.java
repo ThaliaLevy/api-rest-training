@@ -15,17 +15,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gft.dto.etiqueta.EtiquetaMapper;
 import gft.dto.etiqueta.RegistroEtiquetaDTO;
+import gft.dto.usuario.RegistroEtiquetasDoUsuarioDTO;
 import gft.dto.usuario.RegistroUsuarioDTO;
 import gft.dto.usuario.UsuarioMapper;
 import gft.entities.HistoricoParametros;
 import gft.entities.ListaNoticias;
 import gft.entities.Usuario;
 import gft.exception.ForbiddenException;
+import gft.services.EnvioEmailService;
 import gft.services.EtiquetaService;
 import gft.services.UsuarioService;
 
@@ -35,10 +38,12 @@ public class UsuarioController {
 
 	private final UsuarioService usuarioService;
 	private final EtiquetaService etiquetaService;
+	private final EnvioEmailService envioEmailService;
 
-	public UsuarioController(UsuarioService usuarioService, EtiquetaService etiquetaService) {
+	public UsuarioController(UsuarioService usuarioService, EtiquetaService etiquetaService, EnvioEmailService envioEmailService) {
 		this.usuarioService = usuarioService;
 		this.etiquetaService = etiquetaService;
+		this.envioEmailService = envioEmailService;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -114,5 +119,20 @@ public class UsuarioController {
 		List<HistoricoParametros> ocorrenciasDoIdDoUsuario = etiquetaService.visualizarParametrosAcessadosHoje(usuarioAutenticado, verificarDataDeHoje());
 		
 		return ocorrenciasDoIdDoUsuario;
+	}
+
+	@RequestMapping(path = "/email-send", method = RequestMethod.GET)
+	public ResponseEntity<String> enviarEmail() {
+		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
+			List<RegistroEtiquetasDoUsuarioDTO> registros = usuarioService.buscarEtiquetasVinculadasAUsuarios();
+			
+			envioEmailService.enviarEmail(registros, verificarDataDeHoje());
+			
+			return ResponseEntity.status(HttpStatus.OK).body("E-mail de notícias enviado com sucesso!");
+		}
+		
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Envio de e-mails de notícias só pode ser realizado por perfil administrador."); 
 	}
 }

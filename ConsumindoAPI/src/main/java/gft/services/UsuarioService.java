@@ -1,5 +1,7 @@
 package gft.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -9,9 +11,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import gft.dto.usuario.RegistroEtiquetasDoUsuarioDTO;
 import gft.entities.Usuario;
 import gft.exception.AlreadyReportedException;
 import gft.exception.BadRequestException;
+import gft.exception.NotFoundException;
 import gft.repositories.UsuarioRepository;
 
 @Service
@@ -65,6 +69,23 @@ public class UsuarioService implements UserDetailsService {
 		}
 		
 		return optional.get();
+	}
+	
+	public List<RegistroEtiquetasDoUsuarioDTO> buscarEtiquetasVinculadasAUsuarios() {
+		List<Usuario> usuarios = usuarioRepository.findAll();
+		List<RegistroEtiquetasDoUsuarioDTO> registros = new ArrayList<>();
+		
+		for(Usuario usuario : usuarios) {
+			if(!usuario.getEtiquetas().isEmpty()) {
+				registros.add(new RegistroEtiquetasDoUsuarioDTO(usuario.getEmail(), usuario.getEtiquetas()));
+			}	
+		}
+		
+		if(registros.isEmpty()) {
+			throw new NotFoundException("Não há usuários com etiquetas cadastradas.");
+		}
+		
+		return registros;
 	}
 
 	@Override
