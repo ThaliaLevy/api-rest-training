@@ -1,10 +1,10 @@
-package gft.exception;
+package gft.exceptions;
 
-public class BadRequestException extends RuntimeException {
+public class NotFoundException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	private String message;
 
-	public BadRequestException(String message) {
+	public NotFoundException(String message) {
 		super(message);
 		this.message = message;
 	}

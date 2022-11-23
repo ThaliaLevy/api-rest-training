@@ -1,4 +1,4 @@
-package gft.exception.handler;
+package gft.exceptions.handler;
 
 import java.util.Date;
 
@@ -12,10 +12,11 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import gft.dto.exception.ApiErrorDTO;
-import gft.exception.AlreadyReportedException;
-import gft.exception.BadRequestException;
-import gft.exception.ForbiddenException;
-import gft.exception.NotFoundException;
+import gft.exceptions.AlreadyReportedException;
+import gft.exceptions.BadRequestException;
+import gft.exceptions.ForbiddenException;
+import gft.exceptions.InternalServerErrorException;
+import gft.exceptions.NotFoundException;
 
 @ControllerAdvice
 @RestController
@@ -53,4 +54,12 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 		return new ResponseEntity<ApiErrorDTO>(apiError, new HttpHeaders(), apiError.getStatus());
 	}
 
+	
+	@ExceptionHandler({InternalServerErrorException.class})
+	public ResponseEntity<ApiErrorDTO> forbiddenException(InternalServerErrorException ex, WebRequest request){
+		
+		ApiErrorDTO apiError = new ApiErrorDTO(new Date(), ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		
+		return new ResponseEntity<ApiErrorDTO>(apiError, new HttpHeaders(), apiError.getStatus());
+	}
 }

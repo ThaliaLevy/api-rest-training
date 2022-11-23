@@ -27,7 +27,8 @@ import gft.dto.usuario.UsuarioMapper;
 import gft.entities.HistoricoParametros;
 import gft.entities.ListaNoticias;
 import gft.entities.Usuario;
-import gft.exception.ForbiddenException;
+import gft.exceptions.ForbiddenException;
+import gft.exceptions.InternalServerErrorException;
 import gft.services.EnvioEmailService;
 import gft.services.EtiquetaService;
 import gft.services.UsuarioService;
@@ -45,14 +46,22 @@ public class UsuarioController {
 		this.etiquetaService = etiquetaService;
 		this.envioEmailService = envioEmailService;
 	}
+	
+	public Usuario verificarUsuarioAutenticado() {
+		return (Usuario) SecurityContextHolder.getContext()
+											  .getAuthentication()
+											  .getPrincipal();
+	}
 
 	@SuppressWarnings("rawtypes")
 	@PostMapping("/cadastrar")
 	public ResponseEntity salvarUsuario(@RequestBody RegistroUsuarioDTO dto) {
-		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuarioAutenticado = verificarUsuarioAutenticado();
 
 		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
 				usuarioService.salvarUsuario(UsuarioMapper.fromDTO(dto));
+				
+				enviarEmailParaUsuario(dto);
 				
 				return  ResponseEntity.status(HttpStatus.OK).body("Usuário cadastrado com sucesso!");
 		}	
@@ -60,10 +69,22 @@ public class UsuarioController {
 		throw new ForbiddenException("Cadastro de usuários só pode ser realizado por perfil administrador.");
 	}
 
+	private void enviarEmailParaUsuario(RegistroUsuarioDTO dto) {
+		try {
+			String email = dto.getEmail();
+			String textoAssunto = "Cadastro realizado com sucesso!";
+			String textoCorpoEmail = "Seu cadastro foi realizado com sucesso! \n\nAgora você pode cadastrar etiquetas dos temas de seu interesse e usá-las para"
+					+ " consultar as notícias de hoje ou datas anteriores.";
+			envioEmailService.enviarEmailParaUsuario(email, textoAssunto, textoCorpoEmail);
+		} catch (Exception e) {
+			throw new InternalServerErrorException("Houve um erro no envio do e-mail.");
+		}
+	}
+
 	@SuppressWarnings("rawtypes")
 	@PostMapping("/etiquetas/vincular")
 	public ResponseEntity salvarEtiqueta(@RequestBody RegistroEtiquetaDTO dto) throws Exception {
-		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuarioAutenticado = verificarUsuarioAutenticado();
 
 		if (usuarioAutenticado.getPerfil().getNome().equals("Usuario")) {
 			etiquetaService.salvarEtiqueta(EtiquetaMapper.fromDTO(usuarioAutenticado, dto));
@@ -77,7 +98,7 @@ public class UsuarioController {
 	@SuppressWarnings("rawtypes")
 	@GetMapping("/noticias/antigas")
 	public ResponseEntity obterRespostaApiNoticiasAntigas(@RequestParam String q, @RequestParam String date) {
-		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuarioAutenticado = verificarUsuarioAutenticado();
 		
 		if (usuarioAutenticado.getPerfil().getNome().equals("Usuario")) {
 			ListaNoticias noticias = etiquetaService.webClient(usuarioAutenticado, q, date);
@@ -91,7 +112,7 @@ public class UsuarioController {
 	@SuppressWarnings("rawtypes")
 	@GetMapping("/noticias/hoje")
 	public ResponseEntity obterRespostaApiNoticiasHoje(@RequestParam String q) throws ParseException {
-		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuarioAutenticado = verificarUsuarioAutenticado();
 		
 		if (usuarioAutenticado.getPerfil().getNome().equals("Usuario")) {
 			ListaNoticias noticias = etiquetaService.webClient(usuarioAutenticado, q, verificarDataDeHoje());
@@ -113,7 +134,7 @@ public class UsuarioController {
 	@SuppressWarnings("rawtypes")
 	@GetMapping("/etiquetas-mais-acessadas")
 	public ResponseEntity visualizarEtiquetasMaisAcessadas(@PageableDefault(sort = "asc") Pageable pageable) {
-		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuarioAutenticado = verificarUsuarioAutenticado();
 
 		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
 			return ResponseEntity.ok(etiquetaService.listarEtiquetasMaisAcessadas());
@@ -124,7 +145,7 @@ public class UsuarioController {
 
 	@GetMapping("/parametros-acessados")
 	public List<HistoricoParametros> visualizarParametrosAcessadosHoje() {
-		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuarioAutenticado = verificarUsuarioAutenticado();
 
 		List<HistoricoParametros> ocorrenciasDoIdDoUsuario = etiquetaService.visualizarParametrosAcessadosHoje(usuarioAutenticado, verificarDataDeHoje());
 		
@@ -133,12 +154,12 @@ public class UsuarioController {
 
 	@RequestMapping(path = "/email-send", method = RequestMethod.GET)
 	public ResponseEntity<String> enviarEmail() {
-		Usuario usuarioAutenticado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuarioAutenticado = verificarUsuarioAutenticado();
 
 		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
 			List<RegistroEtiquetasDoUsuarioDTO> registros = usuarioService.buscarEtiquetasVinculadasAUsuarios();
 			
-			envioEmailService.enviarEmail(registros, verificarDataDeHoje());
+			envioEmailService.enviarEmailDeNoticias(registros, verificarDataDeHoje());
 			
 			return ResponseEntity.status(HttpStatus.OK).body("E-mail de notícias enviado com sucesso!");
 		}

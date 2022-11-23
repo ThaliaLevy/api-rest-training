@@ -17,7 +17,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import gft.dto.autenticacao.AutenticacaoDTO;
 import gft.dto.autenticacao.TokenDTO;
 import gft.entities.Usuario;
-import gft.exception.ForbiddenException;
+import gft.exceptions.ForbiddenException;
 
 @Service
 public class AutenticacaoService {

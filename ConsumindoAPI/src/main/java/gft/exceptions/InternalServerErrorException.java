@@ -1,10 +1,10 @@
-package gft.exception;
+package gft.exceptions;
 
-public class NotFoundException extends RuntimeException {
+public class InternalServerErrorException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	private String message;
 
-	public NotFoundException(String message) {
+	public InternalServerErrorException(String message) {
 		super(message);
 		this.message = message;
 	}

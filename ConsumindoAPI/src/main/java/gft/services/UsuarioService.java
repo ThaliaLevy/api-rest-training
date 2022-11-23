@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 
 import gft.dto.usuario.RegistroEtiquetasDoUsuarioDTO;
 import gft.entities.Usuario;
-import gft.exception.AlreadyReportedException;
-import gft.exception.BadRequestException;
-import gft.exception.NotFoundException;
+import gft.exceptions.AlreadyReportedException;
+import gft.exceptions.BadRequestException;
+import gft.exceptions.NotFoundException;
 import gft.repositories.UsuarioRepository;
 
 @Service

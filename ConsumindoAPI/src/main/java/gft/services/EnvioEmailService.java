@@ -25,10 +25,10 @@ public class EnvioEmailService {
 		this.mailSender = mailSender;
 	}
 
-	public List<Object> enviarEmail(List<RegistroEtiquetasDoUsuarioDTO> registros, String date) {
+	public String enviarEmailDeNoticias(List<RegistroEtiquetasDoUsuarioDTO> registros, String date) {
 		List<Object> registroNoticiasPorUsuario = new ArrayList<>();
 		List<String> etiquetasDoUsuario = new ArrayList<>();
-		
+		String formatandoNoticiasDoUsuario = "";
 		for (RegistroEtiquetasDoUsuarioDTO registro : registros) {
 			for (Etiqueta etiqueta : registro.getEtiquetas()) {
 				Mono<ListaNoticiasDTO> monoNoticia = consumirApiNoticias(etiqueta.getNome(), date);
@@ -37,15 +37,20 @@ public class EnvioEmailService {
 				etiquetasDoUsuario.add(etiqueta.getNome());
 				registroNoticiasPorUsuario.add(noticias.getList());
 			}
+			
+			for(Object noticiasDoUsuario : registroNoticiasPorUsuario) {
+				formatandoNoticiasDoUsuario = noticiasDoUsuario.toString();
+			}
 
 			String nomesEtiquetasFormatados = formatarExibicacaoTexto(etiquetasDoUsuario);
-
-			enviarEmailParaUsuario(registro.getEmail(), date, registroNoticiasPorUsuario, nomesEtiquetasFormatados);
+			String textoAssunto = "Resumo de notícias (" + date + ")";
+			String textoCorpoEmail = "Tópicos, de acordo com o cadastro de etiquetas: " + nomesEtiquetasFormatados + ".\n\n\nNotícias:" + formatandoNoticiasDoUsuario.substring(1);
+			enviarEmailParaUsuario(registro.getEmail(), textoAssunto, textoCorpoEmail);
 
 			limparLists(etiquetasDoUsuario, registroNoticiasPorUsuario);
 		}
 		
-		return registroNoticiasPorUsuario;
+		return formatandoNoticiasDoUsuario;
 	}
 	
 	public Mono<ListaNoticiasDTO> consumirApiNoticias(String nomeEtiqueta, String date) {
@@ -58,27 +63,27 @@ public class EnvioEmailService {
 		.bodyToMono(ListaNoticiasDTO.class);
 	}
 
-	public String formatarExibicacaoTexto(List<String> etiquetasDoUsuario) {
+	public String formatarExibicacaoTexto(List<String> lista) {
 		int i = 0;
 		String fraseFormatada = "";
 		
-		for (String etiqueta : etiquetasDoUsuario) {
+		for (String indice : lista) {
 			if (i == 0) {
-				fraseFormatada = etiqueta;
+				fraseFormatada = indice;
 				i++;
 			} else {
-				fraseFormatada = fraseFormatada + ", " + etiqueta;
+				fraseFormatada = fraseFormatada + ", " + indice;
 			}
 		}
 		
 		return fraseFormatada.toLowerCase();
 	}
 	
-	public void enviarEmailParaUsuario(String email, String date, List<Object> registroNoticiasPorUsuario, String nomesEtiquetasFormatados) {
+	public void enviarEmailParaUsuario(String email, String textoAssunto, String textoCorpoEmail) {
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(email);
-		message.setSubject("Notícias do dia! (" + date + ")");
-		message.setText("Tópicos: " + nomesEtiquetasFormatados + ".\n\n" + registroNoticiasPorUsuario);
+		message.setSubject(textoAssunto);
+		message.setText(textoCorpoEmail);
 
 		mailSender.send(message);
 	}

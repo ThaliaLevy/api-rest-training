@@ -1,10 +1,10 @@
-package gft.exception;
+package gft.exceptions;
 
-public class AlreadyReportedException extends RuntimeException {
+public class ForbiddenException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	private String message;
 
-	public AlreadyReportedException(String message) {
+	public ForbiddenException(String message) {
 		super(message);
 		this.message = message;
 	}
