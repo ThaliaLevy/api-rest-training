@@ -4,14 +4,14 @@ public class ConsultaUsuarioDTO {
 
 	private String nome;
 	private String email;
-	private String nomePerfil;
+	private String perfil;
 
 	public ConsultaUsuarioDTO() {}
 
-	public ConsultaUsuarioDTO(String nome, String email, String nomePerfil) {
+	public ConsultaUsuarioDTO(String nome, String email, String perfil) {
 		this.nome = nome;
 		this.email = email;
-		this.nomePerfil = nomePerfil;
+		this.perfil = perfil;
 	}
 
 	public String getNome() {
@@ -30,11 +30,11 @@ public class ConsultaUsuarioDTO {
 		this.email = email;
 	}
 
-	public String getNomePerfil() {
-		return nomePerfil;
+	public String getPerfil() {
+		return perfil;
 	}
 
-	public void setNomePerfil(String nomePerfil) {
-		this.nomePerfil = nomePerfil;
+	public void setPerfil(String perfil) {
+		this.perfil = perfil;
 	}
 }

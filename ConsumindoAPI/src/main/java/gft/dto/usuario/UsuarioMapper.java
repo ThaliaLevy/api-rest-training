@@ -11,4 +11,8 @@ public class UsuarioMapper {
 		
 		return new Usuario(null, dto.getNome(), dto.getEmail(), dto.getSenha(), perfil);
 	}
+	
+	public static ConsultaUsuarioDTO fromEntity(Usuario usuario) {
+		return new ConsultaUsuarioDTO(usuario.getNome(), usuario.getEmail(), usuario.getPerfil().getNome());
+	}
 }

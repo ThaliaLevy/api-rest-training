@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
-public class LojaApplication {
+public class APIApplication {
 
 	@Bean
 	public WebClient webClient(WebClient.Builder builder) {
@@ -17,7 +17,7 @@ public class LojaApplication {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(LojaApplication.class, args);
+		SpringApplication.run(APIApplication.class, args);
 	}
 
 }

@@ -2,12 +2,11 @@ package gft.controllers;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,12 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gft.dto.etiqueta.EtiquetaMapper;
 import gft.dto.etiqueta.RegistroEtiquetaDTO;
+import gft.dto.usuario.ConsultaUsuarioDTO;
 import gft.dto.usuario.RegistroEtiquetasDoUsuarioDTO;
 import gft.dto.usuario.RegistroUsuarioDTO;
 import gft.dto.usuario.UsuarioMapper;
 import gft.entities.HistoricoParametros;
 import gft.entities.ListaNoticias;
 import gft.entities.Usuario;
+import gft.exceptions.BadRequestException;
 import gft.exceptions.ForbiddenException;
 import gft.exceptions.InternalServerErrorException;
 import gft.services.EnvioEmailService;
@@ -68,7 +69,7 @@ public class UsuarioController {
 		
 		throw new ForbiddenException("Cadastro de usuários só pode ser realizado por perfil administrador.");
 	}
-
+	
 	private void enviarEmailParaUsuario(RegistroUsuarioDTO dto) {
 		try {
 			String email = dto.getEmail();
@@ -92,7 +93,48 @@ public class UsuarioController {
 			return ResponseEntity.status(HttpStatus.OK).body("Etiqueta vinculada ao usuário com sucesso!");
 		}
 
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Cadastro de etiquetas só pode ser realizado por perfil sem administrador.");
+		throw new ForbiddenException("Cadastro de etiquetas só pode ser realizado por perfil sem administrador.");
+	}
+
+	@GetMapping("/listar")
+	public List<ConsultaUsuarioDTO> listarUsuariosCadastrados(@RequestParam(required = false) String perfil) {
+		Usuario usuarioAutenticado = verificarUsuarioAutenticado();
+
+		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
+			List<ConsultaUsuarioDTO> usuarios = new ArrayList<>();
+
+			if (perfil != null) {
+				List<Usuario> usuariosPorPerfil = usuarioService.listarUsuariosPorPerfil(converterStringPerfilParaLong(perfil));
+				converterListaUsuariosEmDto(usuarios, usuariosPorPerfil);
+			} else {
+				List<Usuario> todosOsUsuarios = usuarioService.listarTodosOsUsuarios();
+				converterListaUsuariosEmDto(usuarios, todosOsUsuarios);
+			}
+
+			return usuarios;
+		}
+
+		throw new ForbiddenException("Consulta de usuários só pode ser realizada por perfil administrador.");
+	}
+
+	private List<ConsultaUsuarioDTO> converterListaUsuariosEmDto(List<ConsultaUsuarioDTO> usuarios, List<Usuario> usuariosDaBuscaNoBanco) {
+		for (Usuario usuario : usuariosDaBuscaNoBanco) {
+			usuarios.add(UsuarioMapper.fromEntity(usuario));
+		}
+		
+		return usuarios;
+	}
+
+	private long converterStringPerfilParaLong(String perfil) {
+		if (perfil.equalsIgnoreCase("Admin")) {
+			perfil = "1";
+		} else if (perfil.equalsIgnoreCase("Usuario")) {
+			perfil = "2";
+		} else {
+			throw new BadRequestException("Perfil inexistente.");
+		}
+		
+		return Long.parseLong(perfil);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -106,7 +148,7 @@ public class UsuarioController {
 			return ResponseEntity.ok(noticias);
 		}
 		
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Consulta de notícias só pode ser realizada por perfil sem administrador.");
+		throw new ForbiddenException("Consulta de notícias só pode ser realizada por perfil sem administrador.");
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -120,7 +162,7 @@ public class UsuarioController {
 			return ResponseEntity.ok(noticias);
 		}
 		
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Consulta de notícias só pode ser realizada por perfil sem administrador.");
+		throw new ForbiddenException("Consulta de notícias só pode ser realizada por perfil sem administrador.");
 	}
 
 	private String verificarDataDeHoje() {
@@ -133,14 +175,14 @@ public class UsuarioController {
 
 	@SuppressWarnings("rawtypes")
 	@GetMapping("/etiquetas-mais-acessadas")
-	public ResponseEntity visualizarEtiquetasMaisAcessadas(@PageableDefault(sort = "asc") Pageable pageable) {
+	public ResponseEntity visualizarEtiquetasMaisAcessadas() {
 		Usuario usuarioAutenticado = verificarUsuarioAutenticado();
 
 		if (usuarioAutenticado.getPerfil().getNome().equals("Admin")) {
 			return ResponseEntity.ok(etiquetaService.listarEtiquetasMaisAcessadas());
 		}
 
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Histórico de etiquetas mais acessadas só pode ser visualizado por perfil administrador.");
+		throw new ForbiddenException("Histórico de etiquetas mais acessadas só pode ser visualizado por perfil administrador.");
 	}
 
 	@GetMapping("/parametros-acessados")
@@ -164,6 +206,6 @@ public class UsuarioController {
 			return ResponseEntity.status(HttpStatus.OK).body("E-mail de notícias enviado com sucesso!");
 		}
 		
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Envio de e-mails de notícias só pode ser realizado por perfil administrador."); 
+		throw new ForbiddenException("Envio de e-mails de notícias só pode ser realizado por perfil administrador."); 
 	}
 }

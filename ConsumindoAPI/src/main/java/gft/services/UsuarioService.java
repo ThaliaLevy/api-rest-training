@@ -72,7 +72,7 @@ public class UsuarioService implements UserDetailsService {
 	}
 	
 	public List<RegistroEtiquetasDoUsuarioDTO> buscarEtiquetasVinculadasAUsuarios() {
-		List<Usuario> usuarios = usuarioRepository.findAll();
+		List<Usuario> usuarios = listarTodosOsUsuarios();
 		List<RegistroEtiquetasDoUsuarioDTO> registros = new ArrayList<>();
 		
 		for(Usuario usuario : usuarios) {
@@ -86,6 +86,22 @@ public class UsuarioService implements UserDetailsService {
 		}
 		
 		return registros;
+	}
+	
+	public List<Usuario> listarTodosOsUsuarios() {
+		try {
+			return usuarioRepository.findAll();
+		} catch (Exception e) {
+			throw new NotFoundException("Não há usuários cadastrados.");
+		}
+	}
+	
+	public List<Usuario> listarUsuariosPorPerfil(Long perfil) {
+		try {
+			return usuarioRepository.findByPerfilId(perfil);
+		} catch (Exception e) {
+			throw new NotFoundException("Não há usuários com este perfil.");
+		}
 	}
 
 	@Override
