@@ -1,4 +1,4 @@
-<h2>Desafio GFT - API Rest</h2>
+<h2>Desafio - API Rest</h2>
 
 <h5>Breve descrição:</h5>
 O projeto tem como objetivo principal facilitar a busca personalizada sobre notícias do dia, de acordo com etiquetas (assuntos) que podem ser cadastradas <br>
