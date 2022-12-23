@@ -1,8 +1,7 @@
 <h2>Desafio - API Rest</h2>
 
 <h5>Breve descrição:</h5>
-O projeto tem como objetivo principal facilitar a busca personalizada sobre notícias do dia, de acordo com etiquetas (assuntos) que podem ser cadastradas <br>
-para cada usuário. <br>
+O projeto tem como objetivo principal facilitar a busca personalizada sobre notícias do dia, de acordo com etiquetas (assuntos) que podem ser cadastradas para cada usuário. <br>
 
 <h5>Tecnologias utilizadas:</h5>
 - Java 17; <br>
@@ -25,8 +24,7 @@ para cada usuário. <br>
 - Cadastro de etiqueta por usuário, realizado somente pelo próprio usuário sem administrador; <br>
 - Consumo de api externa, de onde serão retornadas as listagens de notícias (https://apinoticias.tedk.com.br/); <br>
 - Busca de listagem de notícias ao informar etiqueta relacionada ao assunto que deseja visualizar, realizada somente por usuários sem administrador; <br>
-- Histórico de parâmetros (etiqueta e data) acessados no dia atual, que pode ser visualizado pelo próprio usuário que fez os acessos ou um perfil administrador <br>
-que visualiza os acessos de todos os usuários; <br>
+- Histórico de parâmetros (etiqueta e data) acessados no dia atual, que pode ser visualizado pelo próprio usuário que fez os acessos ou um perfil administrador que visualiza os acessos de todos os usuários; <br>
 - Histórico de etiquetas mais acessadas independente da data, que pode ser visualizado somente por perfil administrador; <br>
 - Banco de dados é populado no ato de criação das tabelas. <br>
 
